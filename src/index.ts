@@ -1,18 +1,41 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Bind resources to your worker in `wrangler.jsonc`. After adding bindings, a type definition for the
- * `Env` object can be regenerated with `npm run cf-typegen`.
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import performOriginRequest from './1-origin-request/performOriginRequest';
+import rewriteOriginResponse from './2-rewrite-origin-response/rewriteOriginResponse';
+import getSurfaceDecisions from './3-surface-decisions/getSurfaceDecisions';
+import handleSurfaceBehaviour from './4-surface-behaviour/handleSurfaceBehaviour';
+import handleSurfaceComponents from './5-surface-components/handleSurfaceComponents';
 
 export default {
-    async fetch(request, env, ctx): Promise<Response> {
-        return new Response('Hello World!');
+    async fetch(request, env): Promise<Response> {
+        // Step 1: Origin request
+        const originResponse = await performOriginRequest(request, env);
+        if (!originResponse.headers.get('Content-Type')?.startsWith('text/html')) {
+            return originResponse;
+        }
+
+        try {
+            // Step 2: Rewrite Origin Links
+            const rewrittenResponse = await rewriteOriginResponse(request, env, originResponse);
+            if (!rewrittenResponse) {
+                return originResponse;
+            }
+
+            // Step 3: MonetizationOS Surface Decisions
+            const [modifiedResponse, surfaceDecisions] = await getSurfaceDecisions(request, env, rewrittenResponse);
+            if (!surfaceDecisions) {
+                return modifiedResponse;
+            }
+
+            // Step 4: Apply Surface Behaviour
+            const [surfaceDecisionResponse, returnImmediately] = handleSurfaceBehaviour(modifiedResponse, surfaceDecisions);
+            if (returnImmediately) {
+                return surfaceDecisionResponse;
+            }
+
+            // Step 5: Apply Surface Component Behaviours
+            return handleSurfaceComponents(surfaceDecisionResponse, surfaceDecisions);
+        } catch (err) {
+            console.error('Error processing response', err);
+            return originResponse;
+        }
     },
 } satisfies ExportedHandler<Env>;

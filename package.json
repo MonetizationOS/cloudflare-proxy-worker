@@ -3,16 +3,39 @@
     "version": "0.0.0",
     "private": true,
     "scripts": {
-        "deploy": "wrangler deploy",
+        "deploy": "wrangler deploy --env ''",
         "dev": "wrangler dev",
         "start": "wrangler dev",
         "test": "vitest",
         "cf-typegen": "wrangler types"
     },
+    "cloudflare": {
+        "bindings": {
+            "MONETIZATION_OS_SECRET_KEY": {
+                "description": "Select your environment's [Secret Key](https://docs.monetization.dev/docs/guides/environments/managing-environments#api-keys) for connecting to MonetizationOS."
+            },
+            "ORIGIN_URL": {
+                "description": "The origin URL for your website."
+            },
+            "SURFACE_SLUG": {
+                "description": "The slug for the surface you want to target."
+            },
+            "AUTHENTICATED_USER_JWT_COOKIE_NAME": {
+                "description": "The cookie used to identify authenticated user JWT sessions."
+            },
+            "ANONYMOUS_SESSION_COOKIE_NAME": {
+                "description": "The cookie used to identify anonymous sessions."
+            }
+        }
+    },
     "devDependencies": {
-        "@cloudflare/vitest-pool-workers": "^0.8.64",
+        "@cloudflare/vitest-pool-workers": "^0.8.65",
+        "@types/node": "^22.5.4",
         "typescript": "^5.9.2",
         "vitest": "~3.2.4",
-        "wrangler": "^4.30.0"
+        "wrangler": "^4.31.0"
+    },
+    "dependencies": {
+        "cookie": "^1.0.2"
     }
 }
