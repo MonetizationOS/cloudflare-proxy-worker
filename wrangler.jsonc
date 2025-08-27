@@ -7,7 +7,7 @@
         "enabled": true
     },
     "vars": {
-        "ORIGIN_URL": "https://news-origin.wingdemo.dev",
+        "ORIGIN_URL": "https://news.wingorigin.dev",
         "SURFACE_SLUG": "the-future-herald-web",
         "AUTHENTICATED_USER_JWT_COOKIE_NAME": "__session",
         "ANONYMOUS_SESSION_COOKIE_NAME": "anon-session-id"
