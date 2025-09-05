@@ -6,7 +6,7 @@ type FetchSurfaceDecisionsArgs = {
     anonymousIdentifier?: string | undefined;
     userJwt?: string | undefined;
     path: string;
-    resourceMetadata?: Record<string, string>;
+    resourceMetadata?: Record<string, any>;
 };
 
 export default async function fetchSurfaceDecisions({
