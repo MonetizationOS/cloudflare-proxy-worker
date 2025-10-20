@@ -17,7 +17,7 @@ export default async function fetchSurfaceDecisions({
     resourceMetadata = {},
 }: FetchSurfaceDecisionsArgs): Promise<SurfaceDecisionResponse | null> {
     try {
-        return await fetch('https://api.monetization.dev/api/v1/surface-decisions', {
+        return await fetch('https://api.monetizationos.com/api/v1/surface-decisions', {
             method: 'POST',
             body: JSON.stringify({
                 surfaceSlug,

@@ -12,7 +12,7 @@
     "cloudflare": {
         "bindings": {
             "MONETIZATION_OS_SECRET_KEY": {
-                "description": "Select your environment's [Secret Key](https://docs.monetization.dev/docs/guides/environments/managing-environments#api-keys) for connecting to MonetizationOS."
+                "description": "Select your environment's [Secret Key](https://docs.monetizationos.com/docs/guides/environments/managing-environments#api-keys) for connecting to MonetizationOS."
             },
             "ORIGIN_URL": {
                 "description": "The origin URL for your website."

@@ -10,7 +10,7 @@ Click deploy to Cloudflare to get started or fork this repo to customize it for 
 
 This worker requires the following environment variables to be set in your Cloudflare configuration:
 
--   `MONETIZATION_OS_SECRET_KEY`: Your MonetizationOS secret key. [Get your secret key](https://docs.monetization.dev/docs/guides/environments/managing-environments#api-keys).
+-   `MONETIZATION_OS_SECRET_KEY`: Your MonetizationOS secret key. [Get your secret key](https://docs.monetizationos.com/docs/guides/environments/managing-environments#api-keys).
 -   `ORIGIN_URL`: The origin URL for your proxied website.
 -   `SURFACE_SLUG`: The slug for the MonetizationOS surface you want to target.
 -   `AUTHENTICATED_USER_JWT_COOKIE_NAME`: Cookie name for authenticated user JWT sessions.

@@ -49,7 +49,7 @@ export const surfaceDecisionsResponse: SurfaceDecisionResponse = {
 
 export function mockSurfaceDecisionsFetch({ status = 200, response = surfaceDecisionsResponse }: MockSurfaceDecisionsFetchOptions = {}) {
     return fetchMock
-        .get('https://api.monetization.dev')
+        .get('https://api.monetizationos.com')
         .intercept({ path: '/api/v1/surface-decisions', method: 'POST' })
         .reply(status, response);
 }
