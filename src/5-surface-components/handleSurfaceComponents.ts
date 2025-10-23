@@ -8,13 +8,13 @@ export default function handleSurfaceComponents(response: Response, surfaceDecis
 
     let doRewrite = false;
     const htmlRewriter = new HTMLRewriter();
-    Object.values(surfaceDecisions.componentBehaviours).forEach((componentBehaviour) => {
-        if (!componentBehaviour.metadata.cssSelector || !componentBehaviour.content) {
+    Object.values(surfaceDecisions.componentBehaviors).forEach((componentBehavior) => {
+        if (!componentBehavior.metadata.cssSelector || !componentBehavior.content) {
             return;
         }
 
         doRewrite = true;
-        htmlRewriter.on(componentBehaviour.metadata.cssSelector, new ContentElementHandler(componentBehaviour.content!));
+        htmlRewriter.on(componentBehavior.metadata.cssSelector, new ContentElementHandler(componentBehavior.content!));
     });
 
     return doRewrite ? htmlRewriter.transform(response) : response;

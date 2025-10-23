@@ -205,7 +205,7 @@ describe('MonetizationOS Proxy', () => {
                 expect(await res.text()).toContain('<h1>Test</h1>');
             },
         },
-    ])('applies surfaceBehaviour http modifications - $name', async ({ http, assert }) => {
+    ])('applies surfaceBehavior http modifications - $name', async ({ http, assert }) => {
         mockOriginFetch();
         mockSurfaceDecisionsFetch({
             response: { ...surfaceDecisionsResponse, surfaceBehavior: { http }, componentsSkipped: http.body !== undefined },
@@ -269,7 +269,7 @@ describe('MonetizationOS Proxy', () => {
         mockSurfaceDecisionsFetch({
             response: {
                 ...surfaceDecisionsResponse,
-                componentBehaviours: {
+                componentBehaviors: {
                     test: {
                         metadata: { cssSelector: 'h1' },
                         content,

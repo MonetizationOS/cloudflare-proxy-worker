@@ -2,7 +2,7 @@ import type { SurfaceDecisionResponse } from '../types';
 
 type ReturnImmediately = boolean;
 
-export default function handleSurfaceBehaviour(
+export default function handleSurfaceBehavior(
     response: Response,
     surfaceDecisions: SurfaceDecisionResponse
 ): [Response, ReturnImmediately] {

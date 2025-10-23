@@ -80,7 +80,7 @@ export interface SurfaceDecisionResponse {
     };
     surfaceBehavior: SurfaceBehaviorApi;
     componentsSkipped: boolean;
-    componentBehaviours: Record<string, SubSurfaceBehaviorApi>;
+    componentBehaviors: Record<string, SubSurfaceBehaviorApi>;
 }
 
 export interface SurfaceDecisionError {

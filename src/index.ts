@@ -1,7 +1,7 @@
 import performOriginRequest from './1-origin-request/performOriginRequest';
 import rewriteOriginResponse from './2-rewrite-origin-response/rewriteOriginResponse';
 import getSurfaceDecisions from './3-surface-decisions/getSurfaceDecisions';
-import handleSurfaceBehaviour from './4-surface-behaviour/handleSurfaceBehaviour';
+import handleSurfaceBehavior from './4-surface-behavior/handleSurfaceBehavior';
 import handleSurfaceComponents from './5-surface-components/handleSurfaceComponents';
 
 export default {
@@ -25,13 +25,13 @@ export default {
                 return modifiedResponse;
             }
 
-            // Step 4: Apply Surface Behaviour
-            const [surfaceDecisionResponse, returnImmediately] = handleSurfaceBehaviour(modifiedResponse, surfaceDecisions);
+            // Step 4: Apply Surface Behavior
+            const [surfaceDecisionResponse, returnImmediately] = handleSurfaceBehavior(modifiedResponse, surfaceDecisions);
             if (returnImmediately) {
                 return surfaceDecisionResponse;
             }
 
-            // Step 5: Apply Surface Component Behaviours
+            // Step 5: Apply Surface Component Behaviors
             return handleSurfaceComponents(surfaceDecisionResponse, surfaceDecisions);
         } catch (err) {
             console.error('Error processing response', err);

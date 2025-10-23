@@ -44,7 +44,7 @@ export const surfaceDecisionsResponse: SurfaceDecisionResponse = {
     customer: { hasProducts: false },
     surfaceBehavior: {},
     componentsSkipped: false,
-    componentBehaviours: {},
+    componentBehaviors: {},
 };
 
 export function mockSurfaceDecisionsFetch({ status = 200, response = surfaceDecisionsResponse }: MockSurfaceDecisionsFetchOptions = {}) {

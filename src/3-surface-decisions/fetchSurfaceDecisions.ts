@@ -21,8 +21,10 @@ export default async function fetchSurfaceDecisions({
             method: 'POST',
             body: JSON.stringify({
                 surfaceSlug,
-                anonymousIdentifier,
-                userJwt,
+                identity: {
+                    anonymousIdentifier,
+                    userJwt,
+                },
                 resource: {
                     ...resourceMetadata,
                     id: path,
