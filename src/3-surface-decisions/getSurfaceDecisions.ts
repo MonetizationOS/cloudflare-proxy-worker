@@ -1,13 +1,13 @@
-import fetchSurfaceDecisions from './fetchSurfaceDecisions';
-import { SurfaceDecisionResponse } from '../types';
-import handleAuthIdentifier from './handleAuthIdentifier';
+import type { SurfaceDecisionResponse } from '../types'
+import fetchSurfaceDecisions from './fetchSurfaceDecisions'
+import handleAuthIdentifier from './handleAuthIdentifier'
 
 export default async function getSurfaceDecisions(
     request: Request,
     env: Env,
-    response: Response
+    response: Response,
 ): Promise<[Response, SurfaceDecisionResponse | null]> {
-    const [modifiedResponse, authIdentifier] = handleAuthIdentifier(request, env, response);
+    const [modifiedResponse, authIdentifier] = handleAuthIdentifier(request, env, response)
 
     const surfaceDecisions = await fetchSurfaceDecisions({
         surfaceSlug: env.SURFACE_SLUG,
@@ -16,7 +16,7 @@ export default async function getSurfaceDecisions(
         resourceMetadata: {
             botManagement: request.cf?.botManagement,
         },
-    });
+    })
 
-    return [modifiedResponse, surfaceDecisions];
+    return [modifiedResponse, surfaceDecisions]
 }

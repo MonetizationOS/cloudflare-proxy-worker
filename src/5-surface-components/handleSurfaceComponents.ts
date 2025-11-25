@@ -1,21 +1,21 @@
-import { ContentElementHandler } from './ContentElementHandler';
-import type { SurfaceDecisionResponse } from '../types';
+import type { SurfaceDecisionResponse } from '../types'
+import { ContentElementHandler } from './ContentElementHandler'
 
 export default function handleSurfaceComponents(response: Response, surfaceDecisions: SurfaceDecisionResponse): Response {
     if (surfaceDecisions.componentsSkipped) {
-        return response;
+        return response
     }
 
-    let doRewrite = false;
-    const htmlRewriter = new HTMLRewriter();
+    let doRewrite = false
+    const htmlRewriter = new HTMLRewriter()
     Object.values(surfaceDecisions.componentBehaviors).forEach((componentBehavior) => {
         if (!componentBehavior.metadata.cssSelector || !componentBehavior.content) {
-            return;
+            return
         }
 
-        doRewrite = true;
-        htmlRewriter.on(componentBehavior.metadata.cssSelector, new ContentElementHandler(componentBehavior.content!));
-    });
+        doRewrite = true
+        htmlRewriter.on(componentBehavior.metadata.cssSelector, new ContentElementHandler(componentBehavior.content))
+    })
 
-    return doRewrite ? htmlRewriter.transform(response) : response;
+    return doRewrite ? htmlRewriter.transform(response) : response
 }

@@ -20,6 +20,8 @@
                 "AUTHENTICATED_USER_JWT_COOKIE_NAME": "jwt-cookie",
                 "ANONYMOUS_SESSION_COOKIE_NAME": "anon-session"
             }
-        }
+        },
+        "local": {},
+        "example": {}
     }
 }

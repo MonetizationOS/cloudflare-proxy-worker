@@ -7,7 +7,8 @@
         "dev": "wrangler dev",
         "start": "wrangler dev",
         "test": "vitest",
-        "cf-typegen": "wrangler types"
+        "cf-typegen": "wrangler types --env example",
+        "lint": "npx biome check --diagnostic-level=error --no-errors-on-unmatched"
     },
     "cloudflare": {
         "bindings": {
@@ -29,6 +30,7 @@
         }
     },
     "devDependencies": {
+        "@biomejs/biome": "^2.3.7",
         "@cloudflare/vitest-pool-workers": "^0.8.65",
         "@types/node": "^22.5.4",
         "typescript": "^5.9.2",
