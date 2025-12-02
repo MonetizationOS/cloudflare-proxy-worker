@@ -33,14 +33,14 @@
         }
     },
     "devDependencies": {
-        "@biomejs/biome": "^2.3.7",
-        "@cloudflare/vitest-pool-workers": "^0.8.65",
-        "@types/node": "^22.5.4",
-        "typescript": "^5.9.2",
+        "@biomejs/biome": "^2.3.8",
+        "@cloudflare/vitest-pool-workers": "^0.10.11",
+        "@types/node": "^24.10.1",
+        "typescript": "^5.9.3",
         "vitest": "~3.2.4",
-        "wrangler": "^4.31.0"
+        "wrangler": "^4.51.0"
     },
     "dependencies": {
-        "cookie": "^1.0.2"
+        "cookie": "^1.1.1"
     }
 }
