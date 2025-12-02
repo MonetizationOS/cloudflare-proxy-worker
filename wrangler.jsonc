@@ -11,7 +11,9 @@
         "SURFACE_SLUG": "the-future-herald-web",
         "AUTHENTICATED_USER_JWT_COOKIE_NAME": "__session",
         "ANONYMOUS_SESSION_COOKIE_NAME": "anon-session-id",
-        "INJECT_SCRIPT_URL": "https://assets.monetizationos.com/web-components-latest.js"
+        "INJECT_SCRIPT_URL": "https://assets.monetizationos.com/web-components-latest.js",
+        "MONETIZATION_OS_HOST_OVERRIDE": "",
+        "MONETIZATION_OS_ENDPOINTS_PREFIX_OVERRIDE": ""
     },
     "env": {
         "test": {
