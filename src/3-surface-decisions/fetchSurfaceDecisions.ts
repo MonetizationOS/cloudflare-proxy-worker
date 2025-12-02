@@ -9,7 +9,7 @@ type FetchSurfaceDecisionsArgs = {
     cf: CfProperties<unknown> | undefined
 }
 
-const host = env.MONETIZATION_OS_HOST_OVERRIDE || 'https://api.monetizationos.com'
+const host = env.MONETIZATION_OS_HOST || 'https://api.monetizationos.com'
 
 export default async function fetchSurfaceDecisions({
     surfaceSlug,

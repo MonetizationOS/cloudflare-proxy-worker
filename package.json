@@ -30,11 +30,11 @@
             "INJECT_SCRIPT_URL": {
                 "description": "The URL of the script to inject for web components."
             },
-            "MONETIZATION_OS_HOST_OVERRIDE": {
-                "description": "**(Optional)** Override the default MonetizationOS API host."
+            "MONETIZATION_OS_HOST": {
+                "description": "The MonetizationOS API host."
             },
-            "MONETIZATION_OS_ENDPOINTS_PREFIX_OVERRIDE": {
-                "description": "**(Optional)** Override the default MonetizationOS API endpoints prefix."
+            "MONETIZATION_OS_ENDPOINTS_PREFIX": {
+                "description": "The MonetizationOS API endpoints prefix."
             }
         }
     },
