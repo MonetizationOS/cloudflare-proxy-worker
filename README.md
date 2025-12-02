@@ -1,8 +1,15 @@
-# MonetizationOS Cloudflare Proxy
+<div align="center">
+  <a href="https://monetizationos.com">
+  <img alt="MonetizationOS logo" src="https://app.monetizationos.com/static/monetizationos-logo.png" height="48">
+  </a>
+  <h1>MonetizationOS Cloudflare Proxy</h1>
+</div>
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Wing-Capital-HoldCo-Limited/cloudflare-proxy-worker)
+MonetizationOS powers monetization for human and non-human users alike. Use this Cloudflare Worker to proxy your website and integrate MonetizationOS Surfaces. Read more about using MonetizationOS at [docs.monetizationos.com](https://docs.monetizationos.com).
 
-Proxy your HTML-based website with MonetizationOS, enabling seamless integration of your MonetizationOS Surfaces.
+## Getting Started
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/MonetizationOS/cloudflare-proxy-worker)
 
 Click deploy to Cloudflare to get started or fork this repo to customize it for your needs.
 
@@ -10,32 +17,32 @@ Click deploy to Cloudflare to get started or fork this repo to customize it for 
 
 This worker requires the following environment variables to be set in your Cloudflare configuration:
 
-- `MONETIZATION_OS_SECRET_KEY`: Your MonetizationOS secret key. [Get your secret key](https://docs.monetizationos.com/docs/guides/environments/managing-environments#api-keys).
-- `ORIGIN_URL`: The origin URL for your proxied website.
-- `SURFACE_SLUG`: The slug for the MonetizationOS surface you want to target.
-- `AUTHENTICATED_USER_JWT_COOKIE_NAME`: Cookie name for authenticated user JWT sessions.
-- `ANONYMOUS_SESSION_COOKIE_NAME`: Cookie name for anonymous sessions.
+-   `MONETIZATION_OS_SECRET_KEY`: Your MonetizationOS secret key. [Get your secret key](https://docs.monetizationos.com/docs/guides/environments/managing-environments#api-keys).
+-   `ORIGIN_URL`: The origin URL for your proxied website.
+-   `SURFACE_SLUG`: The slug for the MonetizationOS surface you want to target.
+-   `AUTHENTICATED_USER_JWT_COOKIE_NAME`: Cookie name for authenticated user JWT sessions.
+-   `ANONYMOUS_SESSION_COOKIE_NAME`: Cookie name for anonymous sessions.
 
 Bindings should be set in your `wrangler.jsonc`, or a `.dev.vars.local` file when [working locally](https://developers.cloudflare.com/workers/development-testing/).
 
 ## Commands
 
-- `npm run dev` — Start local development using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
-- `npm run deploy` — Deploy the worker to Cloudflare.
-- `npm test` — Run tests with Vitest.
-- `npm run cf-typegen` — Generate Cloudflare type definitions.
-- `npm run lint` — Run lint checks with Biome.
+-   `npm run dev` — Start local development using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
+-   `npm run deploy` — Deploy the worker to Cloudflare.
+-   `npm test` — Run tests with Vitest.
+-   `npm run cf-typegen` — Generate Cloudflare type definitions.
+-   `npm run lint` — Run lint checks with Biome.
 
 ## Local Development
 
 1. Install dependencies:
-   ```sh
-   npm install
-   ```
+    ```sh
+    npm install
+    ```
 2. Start the development server:
-   ```sh
-   npm run dev
-   ```
+    ```sh
+    npm run dev
+    ```
 
 ## Deployment
 
