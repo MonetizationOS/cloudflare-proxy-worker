@@ -65,6 +65,6 @@ export class ContentElementHandler implements HTMLRewriterElementContentHandlers
         const webComponentTag = `${schemaSource}-${schemaId}`
         const escapedPropsAttribute = JSON.stringify(component.props).replace(/"/g, '&quot;')
 
-        return `<${webComponentTag} version="${schemaVersion}" props="${escapedPropsAttribute}" />`
+        return `<${webComponentTag} version="${schemaVersion ?? ''}" props="${escapedPropsAttribute}"></${webComponentTag}>`
     }
 }
