@@ -301,7 +301,9 @@ describe('MonetizationOS Proxy', () => {
             assert: (text: string) => {
                 expect(text).not.toContain('UNKNOWN')
                 expect(text).toContain('<h1>Test</h1>')
-                expect(text).toContain('<mos-test version="1.0" props="{&quot;prop1&quot;:&quot;value1&quot;,&quot;prop2&quot;:true}" />')
+                expect(text).toContain(
+                    '<mos-test version="1.0" props="{&quot;prop1&quot;:&quot;value1&quot;,&quot;prop2&quot;:true}"></mos-test>',
+                )
                 expect(text).toContain('<head><script src="https://example.com/web-components-latest.js" async defer></script></head>')
             },
         },
