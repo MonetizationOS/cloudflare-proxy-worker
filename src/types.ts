@@ -48,18 +48,18 @@ export type WebComponentElement<T = Record<string, unknown>> = {
 
 export type WebElement =
     | {
-          type: 'HTML'
+          type: 'html'
           content: string
       }
     | {
-          type: 'TEXT'
+          type: 'text'
           content: string
       }
     | ({
-          type: 'ELEMENT'
+          type: 'element'
       } & WebComponentElement)
     | ({
-          type: 'CUSTOM'
+          type: 'custom'
       } & Record<string, unknown>)
 
 export type WebContentSurfaceBehavior = {

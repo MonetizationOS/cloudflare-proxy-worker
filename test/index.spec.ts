@@ -46,7 +46,10 @@ describe('MonetizationOS Proxy', () => {
     it('proxies mos API requests', async () => {
         fetchMock
             .get('https://api.monetizationos.com')
-            .intercept({ path: '/api/v1/envs/test_123/endpoints/custom-endpoint', method: 'GET' })
+            .intercept({
+                path: '/api/v1/envs/test_123/endpoints/custom-endpoint',
+                method: 'GET',
+            })
             .reply(200, 'response')
 
         const req = new Request('https://test.example/mos-endpoints/custom-endpoint', {
@@ -71,7 +74,9 @@ describe('MonetizationOS Proxy', () => {
     it('does not duplicate anonymous cookie if origin already sets it', async () => {
         const originSetCookieValue = `${env.ANONYMOUS_SESSION_COOKIE_NAME}=test`
 
-        mockOriginFetch({ responseHeaders: { 'Set-Cookie': originSetCookieValue } })
+        mockOriginFetch({
+            responseHeaders: { 'Set-Cookie': originSetCookieValue },
+        })
         mockSurfaceDecisionsFetch()
 
         const req = new Request('https://test.example/index.html')
@@ -85,7 +90,9 @@ describe('MonetizationOS Proxy', () => {
     })
 
     it('rewrites origin header links', async () => {
-        mockOriginFetch({ responseHeaders: { Location: 'https://origin.example/redirect' } })
+        mockOriginFetch({
+            responseHeaders: { Location: 'https://origin.example/redirect' },
+        })
         mockSurfaceDecisionsFetch()
 
         const req = new Request('https://test.example/index.html')
@@ -228,7 +235,11 @@ describe('MonetizationOS Proxy', () => {
     ])('applies surfaceBehavior http modifications - $name', async ({ http, assert }) => {
         mockOriginFetch()
         mockSurfaceDecisionsFetch({
-            response: { ...surfaceDecisionsResponse, surfaceBehavior: { http }, componentsSkipped: http.body !== undefined },
+            response: {
+                ...surfaceDecisionsResponse,
+                surfaceBehavior: { http },
+                componentsSkipped: http.body !== undefined,
+            },
         })
 
         const req = new Request('https://test.example/index.html')
@@ -239,7 +250,7 @@ describe('MonetizationOS Proxy', () => {
     it.each([
         {
             name: 'before',
-            content: { before: [{ type: 'HTML', content: 'BEFORE' } as const] },
+            content: { before: [{ type: 'html', content: 'BEFORE' } as const] },
             assert: (text: string) => {
                 expect(text).toContain('BEFORE')
                 expect(text.indexOf('BEFORE')).toBeLessThan(text.indexOf('<h1>Test</h1>'))
@@ -247,7 +258,7 @@ describe('MonetizationOS Proxy', () => {
         },
         {
             name: 'after',
-            content: { after: [{ type: 'HTML', content: 'AFTER' } as const] },
+            content: { after: [{ type: 'html', content: 'AFTER' } as const] },
             assert: (text: string) => {
                 expect(text).toContain('AFTER')
                 expect(text.indexOf('<h1>Test</h1>')).toBeLessThan(text.indexOf('AFTER'))
@@ -263,8 +274,8 @@ describe('MonetizationOS Proxy', () => {
         {
             name: 'before + after + remove',
             content: {
-                before: [{ type: 'HTML', content: 'BEFORE' } as const],
-                after: [{ type: 'TEXT', content: 'AFTER' } as const],
+                before: [{ type: 'html', content: 'BEFORE' } as const],
+                after: [{ type: 'text', content: 'AFTER' } as const],
                 remove: true,
             },
             assert: (text: string) => {
@@ -277,7 +288,7 @@ describe('MonetizationOS Proxy', () => {
         {
             name: 'ignore custom',
             content: {
-                before: [{ type: 'CUSTOM', content: 'UNKNOWN' } as const],
+                before: [{ type: 'custom', content: 'UNKNOWN' } as const],
             },
             assert: (text: string) => {
                 expect(text).not.toContain('UNKNOWN')
@@ -289,7 +300,7 @@ describe('MonetizationOS Proxy', () => {
             content: {
                 before: [
                     {
-                        type: 'ELEMENT',
+                        type: 'element',
                         schema: 'mos:test@1.0',
                         props: {
                             prop1: 'value1',

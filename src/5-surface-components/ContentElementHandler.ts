@@ -39,16 +39,21 @@ export class ContentElementHandler implements HTMLRewriterElementContentHandlers
 
     private renderElement(element: WebElement): [string, ContentOptions] {
         try {
-            if (element.type === 'HTML') {
-                return [element.content, { html: true }]
+            const mapped = {
+                ...element,
+                type: element.type?.toLowerCase(),
+            } as WebElement
+
+            if (mapped.type === 'html') {
+                return [mapped.content, { html: true }]
             }
 
-            if (element.type === 'TEXT') {
-                return [element.content, { html: false }]
+            if (mapped.type === 'text') {
+                return [mapped.content, { html: false }]
             }
 
-            if (element.type === 'ELEMENT') {
-                return [this.renderComponentElement(element), { html: true }]
+            if (mapped.type === 'element') {
+                return [this.renderComponentElement(mapped), { html: true }]
             }
         } catch (error) {
             console.error('Error rendering element:', error)
