@@ -14,8 +14,17 @@ export default function handleSurfaceComponents(response: Response, surfaceDecis
             return
         }
 
-        doRewrite = true
-        htmlRewriter.on(componentBehavior.metadata.cssSelector, new ContentElementHandler(componentBehavior.content))
+        if (componentBehavior.metadata.cssSelector.includes(':last-child')) {
+            console.warn(`Ignoring unsupported CSS selector '${componentBehavior.metadata.cssSelector}'`)
+            return
+        }
+
+        try {
+            htmlRewriter.on(componentBehavior.metadata.cssSelector, new ContentElementHandler(componentBehavior.content))
+            doRewrite = true
+        } catch (error) {
+            console.error(`Error adding component transform for selector '${componentBehavior.metadata.cssSelector}'`, error)
+        }
     })
 
     if (env.INJECT_SCRIPT_URL) {
