@@ -64,7 +64,9 @@ export type WebElement =
 
 export type WebContentSurfaceBehavior = {
     before?: WebElement[]
+    prepend?: WebElement[]
     remove?: boolean
+    append?: WebElement[]
     after?: WebElement[]
 }
 
