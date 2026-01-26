@@ -124,7 +124,19 @@ describe('MonetizationOS Proxy', () => {
             },
             expected: `<body><head>${componentsTag}</head><mos-test version="1.0" props="{&quot;prop1&quot;:&quot;value1&quot;,&quot;prop2&quot;:true}"></mos-test><h1>Test</h1></body>`,
         },
-    ])('rewrites HTML component content - $name', async ({ content, expected }) => {
+        {
+            name: ':last-child selector is ignored',
+            content: { before: [{ type: 'html', content: 'BEFORE' } as const] },
+            expected: `<body><head></head><h1>Test</h1></body>`,
+            cssSelector: 'h1:last-child',
+        },
+        {
+            name: 'junk CSS selector is ignored',
+            content: { before: [{ type: 'html', content: 'BEFORE' } as const] },
+            expected: `<body><head></head><h1>Test</h1></body>`,
+            cssSelector: '&&&invalid###',
+        },
+    ])('rewrites HTML component content - $name', async ({ content, expected, cssSelector }) => {
         fetchMock.activate()
         fetchMock.disableNetConnect()
         mockOriginFetch()
@@ -133,7 +145,7 @@ describe('MonetizationOS Proxy', () => {
                 ...surfaceDecisionsResponse,
                 componentBehaviors: {
                     test: {
-                        metadata: { cssSelector: 'h1' },
+                        metadata: { cssSelector: cssSelector ?? 'h1' },
                         content,
                     },
                 },
