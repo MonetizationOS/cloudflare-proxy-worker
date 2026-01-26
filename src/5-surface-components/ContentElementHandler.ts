@@ -1,5 +1,8 @@
 import type { WebComponentElement, WebContentSurfaceBehavior, WebElement } from '../types'
 
+const transformPositions = ['before', 'prepend', 'append', 'after'] as const
+const reverseTransformPositions = ['after', 'prepend']
+
 export class ContentElementHandler implements HTMLRewriterElementContentHandlers {
     content: WebContentSurfaceBehavior
 
@@ -13,20 +16,16 @@ export class ContentElementHandler implements HTMLRewriterElementContentHandlers
         }
 
         let retainElement = false
-
-        if (this.content.before?.length) {
-            this.content.before.forEach((transformation) => {
-                element.before(...this.renderElement(transformation))
-            })
-            retainElement = true
-        }
-
-        if (this.content.after?.length) {
-            this.content.after.reverse().forEach((transformation) => {
-                element.after(...this.renderElement(transformation))
-            })
-            retainElement = true
-        }
+        transformPositions.forEach((key) => {
+            if (this.content[key]?.length) {
+                ;(reverseTransformPositions.includes(key) ? [...this.content[key]].reverse() : this.content[key]).forEach(
+                    (transformation) => {
+                        element[key](...this.renderElement(transformation))
+                    },
+                )
+                retainElement = true
+            }
+        })
 
         if (this.content.remove) {
             if (retainElement) {
