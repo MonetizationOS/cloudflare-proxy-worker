@@ -62,10 +62,17 @@ export type WebElement =
           type: 'custom'
       } & Record<string, unknown>)
 
+export type WebComponentRangeReplacement = {
+    fromMarker?: string
+    toMarker?: string
+    replaceWith?: WebElement[] | null
+}
+
 export type WebContentSurfaceBehavior = {
     before?: WebElement[]
     prepend?: WebElement[]
     remove?: boolean
+    replaceRange?: WebComponentRangeReplacement | null
     append?: WebElement[]
     after?: WebElement[]
 }
