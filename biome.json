@@ -29,6 +29,9 @@
             "recommended": true,
             "nursery": {
                 "noFloatingPromises": "error"
+            },
+            "suspicious": {
+                "noAssignInExpressions": "off"
             }
         }
     },
