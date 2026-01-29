@@ -1,15 +1,19 @@
 import { env } from 'cloudflare:workers'
 import type { SurfaceDecisionResponse } from '../types'
+import { buildReplacementHandlers } from './buildReplacementHandlers'
 import { ContentElementHandler } from './ContentElementHandler'
+import { findMarkerPositions } from './findMarkerPositions'
 
-export default function handleSurfaceComponents(response: Response, surfaceDecisions: SurfaceDecisionResponse): Response {
+export default async function handleSurfaceComponents(response: Response, surfaceDecisions: SurfaceDecisionResponse): Promise<Response> {
     if (surfaceDecisions.componentsSkipped) {
         return response
     }
 
+    const { markers, componentsWithInvalidSelectors } = await findMarkerPositions(response, surfaceDecisions)
+
     let doRewrite = false
     const htmlRewriter = new HTMLRewriter()
-    Object.values(surfaceDecisions.componentBehaviors).forEach((componentBehavior) => {
+    Object.entries(surfaceDecisions.componentBehaviors).forEach(([componentKey, componentBehavior]) => {
         if (!componentBehavior.metadata.cssSelector || !componentBehavior.content) {
             return
         }
@@ -19,11 +23,20 @@ export default function handleSurfaceComponents(response: Response, surfaceDecis
             return
         }
 
-        try {
-            htmlRewriter.on(componentBehavior.metadata.cssSelector, new ContentElementHandler(componentBehavior.content))
-            doRewrite = true
-        } catch (error) {
-            console.error(`Error adding component transform for selector '${componentBehavior.metadata.cssSelector}'`, error)
+        const handlers = {
+            [componentBehavior.metadata.cssSelector]: new ContentElementHandler(componentBehavior.content),
+            ...(componentsWithInvalidSelectors.includes(componentKey)
+                ? {}
+                : buildReplacementHandlers(componentBehavior, markers[componentKey])),
+        }
+
+        for (const [selector, handler] of Object.entries(handlers)) {
+            try {
+                htmlRewriter.on(selector, handler)
+                doRewrite = true
+            } catch (error) {
+                console.error(`Error adding component transform for selector '${componentBehavior.metadata.cssSelector}'`, error)
+            }
         }
     })
 
