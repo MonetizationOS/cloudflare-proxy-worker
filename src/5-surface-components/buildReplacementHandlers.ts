@@ -2,27 +2,24 @@ import type { SubSurfaceBehaviorApi } from '../types'
 import { renderElement } from './elements'
 import type { ComponentRange } from './findMarkerPositions'
 
-export type ReplacementHandlers = {
-    [key: string]: HTMLRewriterElementContentHandlers
-}
-
 type ReplacementState = {
     operation: 'SCANNING' | 'REMOVING' | 'REPLACED'
 }
+export type ReplacementHandler = { selector: string; handler: HTMLRewriterElementContentHandlers }
 
 /**
  * Build handlers for HtmlRewriter to do range replacements.
  * Requires that the document has already been passed once to find marker positions.
  */
-export const buildReplacementHandlers = (subSurface: SubSurfaceBehaviorApi, ranges: ComponentRange[]) => {
+export const buildReplacementHandlers = (subSurface: SubSurfaceBehaviorApi, ranges: ComponentRange[]): ReplacementHandler[] => {
     const modification = subSurface.content?.replaceRange
     if (!modification) {
-        return {}
+        return []
     }
 
     if (modification.fromMarker && modification.toMarker && modification.fromMarker === modification.toMarker) {
         console.warn(`fromMarker and toMarker are the same ('${modification.fromMarker}'). This is not supported.`)
-        return {}
+        return []
     }
 
     // State
@@ -50,7 +47,7 @@ export const buildReplacementHandlers = (subSurface: SubSurfaceBehaviorApi, rang
         // If waiting to start replacement and this is a start marker, begin removing at the end of this element
         if (state?.operation === 'SCANNING') {
             if (marker?.startMarker) {
-                for (const after of modification.replaceWith ?? []) {
+                for (const after of (modification.replaceWith ?? []).reverse()) {
                     element.after(...renderElement(after))
                 }
                 try {
@@ -119,8 +116,8 @@ export const buildReplacementHandlers = (subSurface: SubSurfaceBehaviorApi, rang
         },
     }
 
-    return {
-        [`${subSurface.metadata.cssSelector}`]: parentHandler,
-        [`${subSurface.metadata.cssSelector} *`]: { element: onChildElement },
-    }
+    return [
+        { selector: `${subSurface.metadata.cssSelector}`, handler: parentHandler },
+        { selector: `${subSurface.metadata.cssSelector} *`, handler: { element: onChildElement } },
+    ]
 }
