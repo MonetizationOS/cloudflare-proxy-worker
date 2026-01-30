@@ -23,14 +23,17 @@ export default async function handleSurfaceComponents(response: Response, surfac
             return
         }
 
-        const handlers = {
-            [componentBehavior.metadata.cssSelector]: new ContentElementHandler(componentBehavior.content),
+        const handlers = [
+            {
+                selector: componentBehavior.metadata.cssSelector,
+                handler: new ContentElementHandler(componentBehavior.content),
+            },
             ...(componentsWithInvalidSelectors.includes(componentKey)
-                ? {}
+                ? []
                 : buildReplacementHandlers(componentBehavior, markers[componentKey])),
-        }
+        ]
 
-        for (const [selector, handler] of Object.entries(handlers)) {
+        for (const { selector, handler } of handlers) {
             try {
                 htmlRewriter.on(selector, handler)
                 doRewrite = true

@@ -170,6 +170,21 @@ describe('MonetizationOS Proxy', () => {
             expected: `<p>First text <h2>SubTitle</h2>REPLACEMENT</p>`,
         },
         {
+            name: 'Replace from tag multiple',
+            cssSelector: 'p',
+            content: {
+                replaceRange: {
+                    replaceWith: [
+                        { type: 'text', content: 'REPLACEMENT1' },
+                        { type: 'text', content: 'REPLACEMENT2' },
+                    ],
+                    fromMarker: 'h2',
+                },
+            } satisfies WebContentSurfaceBehavior,
+            original: '<p>First text <h2>SubTitle</h2> Second text.</p>',
+            expected: `<p>First text <h2>SubTitle</h2>REPLACEMENT1REPLACEMENT2</p>`,
+        },
+        {
             name: 'Replace from self-closing tag',
             cssSelector: 'p',
             content: {
@@ -370,6 +385,7 @@ describe('MonetizationOS Proxy', () => {
 <p class="c2">First text <h3>SubTitle</h3><p class="c1">First text <h2>SubTitle</h2></p></p>
 <p class="c2"><p class="c1">First text <h2>SubTitle</h2>Second text</p><h3>SubTitle</h3>Second text<p class="c1">text<h2>SubTitle</h2>text</p></p>
 <p class="c2">Prefix<p class="c2">First text <h3>SubTitle</h3>Second text</p></p>
+<p class="c3">First text<h3>SubTitle</h3>Second text</p>
 </body>
 </html>`,
         })
@@ -393,6 +409,15 @@ describe('MonetizationOS Proxy', () => {
                         metadata: { cssSelector: 'p' },
                         content: {
                             remove: false,
+                        },
+                    },
+                    c3: {
+                        metadata: { cssSelector: '.c3' },
+                        content: {
+                            prepend: [{ type: 'text', content: 'PREPEND' }],
+                            replaceRange: { replaceWith: [{ type: 'text', content: 'REPLACEMENT' }], fromMarker: 'h3' },
+                            append: [{ type: 'text', content: 'APPEND' }],
+                            after: [{ type: 'text', content: 'AFTER' }],
                         },
                     },
                     body: {
@@ -422,6 +447,7 @@ describe('MonetizationOS Proxy', () => {
 <p class="c2">REPLACEMENT<h3>SubTitle</h3><p class="c1">REPLACEMENT<h2>SubTitle</h2></p></p>
 <p class="c2">REPLACEMENT<h3>SubTitle</h3>Second text<p class="c1">REPLACEMENT<h2>SubTitle</h2>text</p></p>
 <p class="c2">REPLACEMENT<p class="c2">REPLACEMENT<h3>SubTitle</h3>Second text</p></p>
+<p class="c3">PREPENDFirst text<h3>SubTitle</h3>REPLACEMENTAPPEND</p>AFTER
 APPEND</body>
 </html>`,
         )
