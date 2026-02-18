@@ -5,7 +5,11 @@
   <h1>MonetizationOS Cloudflare Proxy</h1>
 </div>
 
-MonetizationOS powers monetization for human and non-human users alike. Use this Cloudflare Worker to proxy your website and integrate MonetizationOS Surfaces. Read more about using MonetizationOS at [docs.monetizationos.com](https://docs.monetizationos.com).
+[MonetizationOS](https://monetizationos.com) powers monetization for human and bot users alike. Use this Cloudflare Worker to proxy your website and integrate MonetizationOS Surfaces, enabling seamless monetization experiences for sites served with static HTML.
+
+This worker includes handling for both HTTP response modification and CSS-targeted Components for content modifications including: removal/truncation, displaying offerings, and custom messaging.
+
+Read more about using MonetizationOS at [docs.monetizationos.com](https://docs.monetizationos.com).
 
 ## Getting Started
 
