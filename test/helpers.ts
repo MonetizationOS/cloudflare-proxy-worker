@@ -1,4 +1,5 @@
 import { fetchMock } from 'cloudflare:test'
+import { vi } from 'vitest'
 import type { SurfaceDecisionResponse } from '../src/types'
 
 type MockOriginFetchOptions = {
@@ -48,8 +49,17 @@ export const surfaceDecisionsResponse: SurfaceDecisionResponse = {
 }
 
 export function mockSurfaceDecisionsFetch({ status = 200, response = surfaceDecisionsResponse }: MockSurfaceDecisionsFetchOptions = {}) {
-    return fetchMock
+    const mockSurfaceDecision = vi.fn()
+    fetchMock
         .get('https://api.monetizationos.com')
         .intercept({ path: '/api/v1/surface-decisions', method: 'POST' })
-        .reply(status, response)
+        .reply((data) => {
+            mockSurfaceDecision(JSON.parse(data.body as string))
+            return {
+                statusCode: status,
+                data: JSON.stringify(response),
+                responseOptions: { headers: { 'Content-Type': 'application/json' } },
+            }
+        })
+    return mockSurfaceDecision
 }
