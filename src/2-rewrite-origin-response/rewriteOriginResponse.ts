@@ -18,17 +18,22 @@ export default async function rewriteOriginResponse(request: Request, env: Env, 
 
     // Rewrite origin response body links
     let body: string | null = null
+    const responseInit: ResponseInit = {
+        status: response.status,
+        statusText: response.statusText,
+        headers,
+    }
     try {
         body = await response.text()
         if (!body?.length) {
-            return new Response(response.body, { ...response, headers })
+            return new Response(response.body, responseInit)
         }
 
         const transformedBody = transformOriginLinks(requestUrl, originUrl, body)
-        return new Response(transformedBody, { ...response, headers })
+        return new Response(transformedBody, responseInit)
     } catch (err) {
         console.error('Error rewriting origin links', err)
 
-        return new Response(body ?? response.body, { ...response, headers })
+        return new Response(body ?? response.body, responseInit)
     }
 }

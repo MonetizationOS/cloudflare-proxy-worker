@@ -71,6 +71,20 @@ describe('MonetizationOS Proxy', () => {
         expect(res.status).toBe(200)
     })
 
+    it('preserves 404 origin HTTP status code for HTML responses', async () => {
+        mockOriginFetch({
+            path: '/missing-page.html',
+            status: 404,
+            responseBody: '<html><body>Not Found</body></html>',
+        })
+        mockSurfaceDecisionsFetch()
+
+        const req = new Request('https://test.example/missing-page.html')
+        const res = await SELF.fetch(req)
+        expect(res.status).toBe(404)
+        expect(res.statusText).toBe('Not Found')
+    })
+
     it('does not duplicate anonymous cookie if origin already sets it', async () => {
         const originSetCookieValue = `${env.ANONYMOUS_SESSION_COOKIE_NAME}=test`
 
