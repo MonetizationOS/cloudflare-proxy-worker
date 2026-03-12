@@ -1,5 +1,5 @@
 import { env } from 'cloudflare:workers'
-import type { SurfaceDecisionError, SurfaceDecisionResponse } from '../types'
+import type { PageMetadata, SurfaceDecisionError, SurfaceDecisionResponse } from '../types'
 
 type FetchSurfaceDecisionsArgs = {
     surfaceSlug: string
@@ -7,6 +7,7 @@ type FetchSurfaceDecisionsArgs = {
     userJwt?: string | undefined
     path: string
     cf: CfProperties<unknown> | undefined
+    pageMetadata?: PageMetadata
 }
 
 const host = env.MONETIZATION_OS_HOST || 'https://api.monetizationos.com'
@@ -17,6 +18,7 @@ export default async function fetchSurfaceDecisions({
     userJwt,
     path,
     cf,
+    pageMetadata,
 }: FetchSurfaceDecisionsArgs): Promise<SurfaceDecisionResponse | null> {
     try {
         return await fetch(`${host}/api/v1/surface-decisions`, {
@@ -29,6 +31,7 @@ export default async function fetchSurfaceDecisions({
                 },
                 resource: {
                     id: path,
+                    meta: pageMetadata,
                 },
                 cloudflare: {
                     cf,

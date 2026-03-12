@@ -1,3 +1,5 @@
+export type PageMetadata = Record<string, string>
+
 export interface FeatureMeterableProperty {
     type: 'meterable'
     hasAccess: boolean
