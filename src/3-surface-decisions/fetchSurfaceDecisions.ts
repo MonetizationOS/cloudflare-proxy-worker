@@ -6,6 +6,7 @@ type FetchSurfaceDecisionsArgs = {
     anonymousIdentifier?: string | undefined
     userJwt?: string | undefined
     path: string
+    queryParams?: Record<string, string> | undefined
     cf: CfProperties<unknown> | undefined
     pageMetadata?: PageMetadata
 }
@@ -17,6 +18,7 @@ export default async function fetchSurfaceDecisions({
     anonymousIdentifier,
     userJwt,
     path,
+    queryParams,
     cf,
     pageMetadata,
 }: FetchSurfaceDecisionsArgs): Promise<SurfaceDecisionResponse | null> {
@@ -31,6 +33,7 @@ export default async function fetchSurfaceDecisions({
                 },
                 resource: {
                     id: path,
+                    queryParams,
                     meta: pageMetadata,
                 },
                 cloudflare: {

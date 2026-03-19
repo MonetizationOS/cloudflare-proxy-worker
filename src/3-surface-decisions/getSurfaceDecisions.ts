@@ -17,6 +17,7 @@ export default async function getSurfaceDecisions(
         surfaceSlug: env.SURFACE_SLUG,
         ...authIdentifier,
         path: new URL(request.url).pathname,
+        queryParams: new URL(request.url).searchParams.size > 0 ? Object.fromEntries(new URL(request.url).searchParams) : undefined,
         cf: request.cf,
         pageMetadata,
     })
