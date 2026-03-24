@@ -71,6 +71,21 @@ describe('MonetizationOS Proxy', () => {
         expect(res.status).toBe(200)
     })
 
+    it('sends raw URL in http.url in surface decisions payload', async () => {
+        mockOriginFetch({ path: '/index.html?test=123&test1=456' })
+        const mockSurfaceDecision = mockSurfaceDecisionsFetch()
+
+        const req = new Request('https://test.example/index.html?test=123&test1=456')
+        await SELF.fetch(req)
+
+        expect(mockSurfaceDecision).toHaveBeenCalledWith(
+            expect.objectContaining({
+                resource: expect.objectContaining({ id: '/index.html' }),
+                http: { url: 'https://test.example/index.html?test=123&test1=456' },
+            }),
+        )
+    })
+
     it('preserves 404 origin HTTP status code for HTML responses', async () => {
         mockOriginFetch({
             path: '/missing-page.html',
