@@ -8,12 +8,13 @@
     },
     "vars": {
         "ORIGIN_URL": "https://news.wingorigin.dev",
-        "SURFACE_SLUG": "the-future-herald-web",
+        "SURFACE_SLUG": "web",
         "AUTHENTICATED_USER_JWT_COOKIE_NAME": "__session",
         "ANONYMOUS_SESSION_COOKIE_NAME": "anon-session-id",
         "INJECT_SCRIPT_URL": "https://assets.monetizationos.com/web-components-latest.js",
         "MONETIZATION_OS_HOST": "https://api.monetizationos.com",
-        "MONETIZATION_OS_ENDPOINTS_PREFIX": "/mos-endpoints/"
+        "MONETIZATION_OS_ENDPOINTS_PREFIX": "/mos-endpoints/",
+        "SURFACE_DECISIONS_IGNORE_PATHS": ""
     },
     "env": {
         "test": {
@@ -25,7 +26,8 @@
                 "INJECT_SCRIPT_URL": "https://example.com/web-components-latest.js",
                 "MONETIZATION_OS_HOST": "https://api.monetizationos.com",
                 "MONETIZATION_OS_ENDPOINTS_PREFIX": "/mos-endpoints/",
-                "MONETIZATION_OS_SECRET_KEY": "sk_test_123_key.payload"
+                "MONETIZATION_OS_SECRET_KEY": "sk_test_123_key.payload",
+                "SURFACE_DECISIONS_IGNORE_PATHS": ""
             }
         },
         "local": {},

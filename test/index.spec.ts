@@ -275,4 +275,25 @@ describe('MonetizationOS Proxy', () => {
         const res = await SELF.fetch(req)
         await assert(res)
     })
+
+    it('skips surface decisions for ignored paths but still proxies and rewrites', async () => {
+        const originalIgnorePaths = env.SURFACE_DECISIONS_IGNORE_PATHS
+        env.SURFACE_DECISIONS_IGNORE_PATHS = '^/ignored/'
+
+        try {
+            mockOriginFetch({
+                path: '/ignored/page.html',
+                responseBody: '<body><a href="https://origin.example/link">Link</a></body>',
+            })
+
+            const req = new Request('https://test.example/ignored/page.html')
+            const res = await SELF.fetch(req)
+            expect(res.status).toBe(200)
+            const text = await res.text()
+            expect(text).toContain('https://test.example/link')
+            expect(text).not.toContain('https://origin.example/link')
+        } finally {
+            env.SURFACE_DECISIONS_IGNORE_PATHS = originalIgnorePaths
+        }
+    })
 })

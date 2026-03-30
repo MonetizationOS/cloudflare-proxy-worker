@@ -2,6 +2,7 @@ import customEndpointRequest from './1-origin-request/customEndpointRequest'
 import performOriginRequest from './1-origin-request/performOriginRequest'
 import rewriteOriginResponse from './2-rewrite-origin-response/rewriteOriginResponse'
 import getSurfaceDecisions from './3-surface-decisions/getSurfaceDecisions'
+import shouldIgnorePath from './3-surface-decisions/shouldIgnorePath'
 import handleSurfaceBehavior from './4-surface-behavior/handleSurfaceBehavior'
 import handleSurfaceComponents from './5-surface-components/handleSurfaceComponents'
 
@@ -26,6 +27,10 @@ export default {
             }
 
             // Step 3: MonetizationOS Surface Decisions
+            if (shouldIgnorePath(request, env)) {
+                return rewrittenResponse
+            }
+
             const [modifiedResponse, surfaceDecisions] = await getSurfaceDecisions(request, env, rewrittenResponse)
             if (!surfaceDecisions) {
                 return modifiedResponse
