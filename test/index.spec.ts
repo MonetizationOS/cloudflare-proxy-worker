@@ -296,4 +296,17 @@ describe('MonetizationOS Proxy', () => {
             env.SURFACE_DECISIONS_IGNORE_PATHS = originalIgnorePaths
         }
     })
+
+    it.each([301, 302, 307])('skips surface decisions for %i redirects', async (status) => {
+        mockOriginFetch({
+            path: '/redirect-page',
+            status,
+            responseHeaders: { Location: 'https://origin.example/somewhere-else' },
+        })
+
+        const req = new Request('https://test.example/redirect-page', { redirect: 'manual' })
+        const res = await SELF.fetch(req)
+        expect(res.status).toBe(status)
+        expect(res.headers.get('location')).toBe('https://test.example/somewhere-else')
+    })
 })
