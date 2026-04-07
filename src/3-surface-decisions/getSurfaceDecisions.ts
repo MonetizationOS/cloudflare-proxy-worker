@@ -20,6 +20,8 @@ export default async function getSurfaceDecisions(
         url: request.url,
         cf: request.cf,
         pageMetadata,
+        userAgent: request.headers.get('User-Agent') ?? undefined,
+        originStatus: response.status,
     })
 
     return [passThroughStream ? new Response(passThroughStream, modifiedResponse) : modifiedResponse, surfaceDecisions]

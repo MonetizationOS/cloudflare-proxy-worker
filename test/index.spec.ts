@@ -81,7 +81,37 @@ describe('MonetizationOS Proxy', () => {
         expect(mockSurfaceDecision).toHaveBeenCalledWith(
             expect.objectContaining({
                 resource: expect.objectContaining({ id: '/index.html' }),
-                http: { url: 'https://test.example/index.html?test=123&test1=456' },
+                http: expect.objectContaining({ url: 'https://test.example/index.html?test=123&test1=456' }),
+            }),
+        )
+    })
+
+    it('sends User-Agent header in http.userAgent in surface decisions payload', async () => {
+        mockOriginFetch()
+        const mockSurfaceDecision = mockSurfaceDecisionsFetch()
+
+        const req = new Request('https://test.example/index.html', {
+            headers: { 'User-Agent': 'TestBrowser/1.0' },
+        })
+        await SELF.fetch(req)
+
+        expect(mockSurfaceDecision).toHaveBeenCalledWith(
+            expect.objectContaining({
+                http: expect.objectContaining({ userAgent: 'TestBrowser/1.0' }),
+            }),
+        )
+    })
+
+    it('sends origin status code in http.proxyOrigin.status in surface decisions payload', async () => {
+        mockOriginFetch({ status: 404, responseBody: '<html><body>Not Found</body></html>' })
+        const mockSurfaceDecision = mockSurfaceDecisionsFetch()
+
+        const req = new Request('https://test.example/index.html')
+        await SELF.fetch(req)
+
+        expect(mockSurfaceDecision).toHaveBeenCalledWith(
+            expect.objectContaining({
+                http: expect.objectContaining({ proxyOrigin: { status: 404 } }),
             }),
         )
     })
