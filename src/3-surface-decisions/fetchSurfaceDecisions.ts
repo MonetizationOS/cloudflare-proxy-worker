@@ -27,14 +27,12 @@ export default async function fetchSurfaceDecisions({
     originStatus,
 }: FetchSurfaceDecisionsArgs): Promise<SurfaceDecisionResponse | null> {
     try {
+        console.log(`${host}/api/v1/surface-decisions`)
         return await fetch(`${host}/api/v1/surface-decisions`, {
             method: 'POST',
             body: JSON.stringify({
                 surfaceSlug,
-                identity: {
-                    anonymousIdentifier,
-                    userJwt,
-                },
+                identity: !anonymousIdentifier && !userJwt ? { createAnonymousIdentifier: true } : { anonymousIdentifier, userJwt },
                 resource: {
                     id: path,
                     meta: pageMetadata,
