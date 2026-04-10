@@ -38,6 +38,9 @@
             },
             "SURFACE_DECISIONS_IGNORE_PATHS": {
                 "description": "Comma-separated regex patterns for paths that should skip surface decisions."
+            },
+            "ORIGIN_REQUEST_HEADERS": {
+                "description": "Optional JSON object mapping header names to values added to every origin request (e.g. {\"X-Api-Key\":\"secret\"}). Use {} when unset."
             }
         }
     },
