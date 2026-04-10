@@ -37,7 +37,8 @@
                 "description": "The MonetizationOS API endpoints prefix."
             },
             "SURFACE_DECISIONS_IGNORE_PATHS": {
-                "description": "Comma-separated regex patterns for paths that should skip surface decisions."
+                "description": "Comma-separated regex patterns for paths that should skip surface decisions.",
+                "default": ""
             }
         }
     },
