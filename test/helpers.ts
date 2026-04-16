@@ -9,12 +9,12 @@ type MockOriginFetchOptions = {
     requestBody?: string | null
     responseBody?: string | object
     contentType?: string
-    responseHeaders?: Record<string, string>
+    responseHeaders?: Record<string, string | string[]>
 }
 
 type MockSurfaceDecisionsFetchOptions = {
     status?: number
-    response?: SurfaceDecisionResponse
+    response?: Partial<SurfaceDecisionResponse>
 }
 
 export function mockOriginFetch({
@@ -30,12 +30,10 @@ export function mockOriginFetch({
         contentType = 'application/json'
     }
 
-    const headers: Record<string, string> = { ...responseHeaders, 'Content-Type': contentType }
-
     return fetchMock
         .get('https://origin.example')
         .intercept({ path, method, ...(requestBody ? { body: requestBody } : {}) })
-        .reply(status, responseBody, { headers })
+        .reply(status, responseBody, { headers: { ...responseHeaders, 'Content-Type': contentType } })
 }
 
 export const surfaceDecisionsResponse: SurfaceDecisionResponse = {
@@ -48,7 +46,7 @@ export const surfaceDecisionsResponse: SurfaceDecisionResponse = {
     componentBehaviors: {},
 }
 
-export function mockSurfaceDecisionsFetch({ status = 200, response = surfaceDecisionsResponse }: MockSurfaceDecisionsFetchOptions = {}) {
+export function mockSurfaceDecisionsFetch({ status = 200, response }: MockSurfaceDecisionsFetchOptions = {}) {
     const mockSurfaceDecision = vi.fn()
     fetchMock
         .get('https://api.monetizationos.com')
@@ -57,7 +55,7 @@ export function mockSurfaceDecisionsFetch({ status = 200, response = surfaceDeci
             mockSurfaceDecision(JSON.parse(data.body as string))
             return {
                 statusCode: status,
-                data: JSON.stringify(response),
+                data: JSON.stringify({ ...surfaceDecisionsResponse, ...response }),
                 responseOptions: { headers: { 'Content-Type': 'application/json' } },
             }
         })
