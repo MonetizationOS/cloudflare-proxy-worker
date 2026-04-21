@@ -29,6 +29,18 @@ This worker requires the following environment variables to be set in your Cloud
 
 Bindings should be set in your `wrangler.jsonc`, or a `.dev.vars.local` file when [working locally](https://developers.cloudflare.com/workers/development-testing/).
 
+## Optional: headers sent to the origin
+
+`ORIGIN_REQUEST_HEADERS` adds or overrides outgoing headers on every upstream fetch to `ORIGIN_URL`. Set it to a JSON object mapping header names to values. Leave it as `{}` when no extra headers are needed.
+
+In `wrangler.jsonc` `vars`:
+
+```jsonc
+"ORIGIN_REQUEST_HEADERS": { "X-Api-Key": "secret", "X-Custom": "my-value" }
+```
+
+In the Cloudflare dashboard, the variable supports JSON input directly.
+
 ## Commands
 
 -   `npm run dev` — Start local development using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
