@@ -15,6 +15,7 @@ declare namespace Cloudflare {
 		MONETIZATION_OS_ENDPOINTS_PREFIX: string;
 		MONETIZATION_OS_SECRET_KEY: string;
 		SURFACE_DECISIONS_IGNORE_PATHS: string;
+		ORIGIN_REQUEST_HEADERS: Record<string, string>;
 	}
 }
 interface Env extends Cloudflare.Env {}
