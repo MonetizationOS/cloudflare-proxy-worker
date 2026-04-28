@@ -14,8 +14,6 @@
         "INJECT_SCRIPT_URL": "https://assets.monetizationos.com/web-components-latest.js",
         "MONETIZATION_OS_HOST": "https://api.monetizationos.com",
         "MONETIZATION_OS_ENDPOINTS_PREFIX": "/mos-endpoints/",
-        "SURFACE_DECISIONS_IGNORE_PATHS": "",
-        // JSON object: header names to values sent to the origin on each request.
         "ORIGIN_REQUEST_HEADERS": {}
     },
     "env": {
@@ -29,7 +27,6 @@
                 "MONETIZATION_OS_HOST": "https://api.monetizationos.com",
                 "MONETIZATION_OS_ENDPOINTS_PREFIX": "/mos-endpoints/",
                 "MONETIZATION_OS_SECRET_KEY": "sk_test_123_key.payload",
-                "SURFACE_DECISIONS_IGNORE_PATHS": "",
                 "ORIGIN_REQUEST_HEADERS": {}
             }
         },
