@@ -31,7 +31,7 @@ export default async function fetchSurfaceDecisions({
             method: 'POST',
             body: JSON.stringify({
                 surfaceSlug,
-                identity: !anonymousIdentifier && !userJwt ? { createAnonymousIdentifier: true } : { anonymousIdentifier, userJwt },
+                identity: identity({ anonymousIdentifier, userJwt }),
                 resource: {
                     id: path,
                     meta: pageMetadata,
@@ -63,4 +63,11 @@ export default async function fetchSurfaceDecisions({
         console.error('Error fetching surface decisions:', error)
         return null
     }
+}
+
+const identity = ({ anonymousIdentifier, userJwt }: Pick<FetchSurfaceDecisionsArgs, 'anonymousIdentifier' | 'userJwt'>) => {
+    if (!anonymousIdentifier && !userJwt) {
+        return { createAnonymousIdentifier: true }
+    }
+    return userJwt ? { userJwt } : { anonymousIdentifier }
 }

@@ -41,6 +41,11 @@ describe('MonetizationOS Proxy', () => {
             requestCookie: 'anon-session=request-id; Path=/',
             expectedIdentity: { anonymousIdentifier: 'origin-id' },
         },
+        {
+            originSetCookie: [],
+            requestCookie: 'anon-session=request-id; jwt-cookie=request-jwt;',
+            expectedIdentity: { userJwt: 'request-jwt' },
+        },
     ])('extracts identity from request - %s', async ({ originSetCookie, requestCookie, expectedIdentity }) => {
         mockOriginFetch({
             responseHeaders: {
