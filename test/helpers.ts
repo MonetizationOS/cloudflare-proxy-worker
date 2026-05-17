@@ -1,6 +1,6 @@
 import { fetchMock } from 'cloudflare:test'
+import type { SurfaceDecisionResponse } from '@monetizationos/proxy'
 import { vi } from 'vitest'
-import type { SurfaceDecisionResponse } from '../src/types'
 
 type MockOriginFetchOptions = {
     path?: string

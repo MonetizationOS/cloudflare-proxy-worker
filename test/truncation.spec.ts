@@ -1,6 +1,6 @@
 import { fetchMock, SELF } from 'cloudflare:test'
+import type { WebContentSurfaceBehavior } from '@monetizationos/proxy'
 import { describe, expect, it } from 'vitest'
-import type { WebContentSurfaceBehavior } from '../src/types'
 import { mockOriginFetch, mockSurfaceDecisionsFetch, surfaceDecisionsResponse } from './helpers'
 
 describe('MonetizationOS Proxy', () => {

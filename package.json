@@ -53,6 +53,6 @@
         "wrangler": "^4.51.0"
     },
     "dependencies": {
-        "cookie": "^1.1.1"
+        "@monetizationos/proxy": "1.0.3"
     }
 }
