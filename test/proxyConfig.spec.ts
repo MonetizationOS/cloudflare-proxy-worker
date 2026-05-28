@@ -29,6 +29,23 @@ describe('proxy config', () => {
         }
     }
 
+    it('loads with all env vars empty (deploy-validation safety)', async () => {
+        const restore: Array<() => void> = []
+        for (const key of Object.keys(env) as Array<keyof Env>) {
+            const previous = env[key]
+            ;(env as Record<keyof Env, unknown>)[key] = undefined
+            restore.push(() => {
+                ;(env as Record<keyof Env, unknown>)[key] = previous
+            })
+        }
+        try {
+            vi.resetModules()
+            await expect(import('../src/index')).resolves.toBeDefined()
+        } finally {
+            for (const reset of restore) reset()
+        }
+    })
+
     it('prepends the origin pathname and rewrites base-path origin links', async () => {
         fetchMock
             .get('https://origin.example')

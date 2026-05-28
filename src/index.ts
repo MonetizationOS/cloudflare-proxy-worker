@@ -3,10 +3,10 @@ import { type ElementHandlers, type HtmlRewriterSession, MOSProxyBuilder } from 
 
 const proxy = new MOSProxyBuilder()
     .withConfig({
-        originUrl: env.ORIGIN_URL,
-        surfaceSlug: env.SURFACE_SLUG,
+        originUrl: env.ORIGIN_URL || 'https://example.local',
+        surfaceSlug: env.SURFACE_SLUG ?? '',
         mosHost: env.MONETIZATION_OS_HOST || 'https://api.monetizationos.com',
-        mosSecretKey: env.MONETIZATION_OS_SECRET_KEY,
+        mosSecretKey: env.MONETIZATION_OS_SECRET_KEY ?? '',
         mosEndpointsPrefix: env.MONETIZATION_OS_ENDPOINTS_PREFIX || '/mos-endpoints/',
         anonymousSessionCookieName: env.ANONYMOUS_SESSION_COOKIE_NAME,
         authenticatedUserJwtCookieName: env.AUTHENTICATED_USER_JWT_COOKIE_NAME,
