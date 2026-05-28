@@ -1,7 +1,22 @@
 import { fetchMock } from 'cloudflare:test'
-import { env } from 'cloudflare:workers'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { mockSurfaceDecisionsFetch } from './helpers'
+
+function makeEnv(overrides: Partial<Env> = {}): Env {
+    return {
+        ORIGIN_URL: 'https://origin.example',
+        SURFACE_SLUG: 'web',
+        AUTHENTICATED_USER_JWT_COOKIE_NAME: 'jwt-cookie',
+        ANONYMOUS_SESSION_COOKIE_NAME: 'anon-session',
+        INJECT_SCRIPT_URL: 'https://example.com/web-components-latest.js',
+        MONETIZATION_OS_HOST: 'https://api.monetizationos.com',
+        MONETIZATION_OS_ENDPOINTS_PREFIX: '/mos-endpoints/',
+        MONETIZATION_OS_SECRET_KEY: 'sk_test_123_key.payload',
+        SURFACE_DECISIONS_IGNORE_PATHS: '',
+        ORIGIN_REQUEST_HEADERS: {},
+        ...overrides,
+    }
+}
 
 describe('proxy config', () => {
     beforeAll(() => {
@@ -11,22 +26,10 @@ describe('proxy config', () => {
 
     afterEach(() => fetchMock.assertNoPendingInterceptors())
 
-    async function fetchWithFreshWorker(request: Request, overrides: Partial<Env> = {}): Promise<Response> {
-        const restore: Array<() => void> = []
-        for (const [key, value] of Object.entries(overrides) as Array<[keyof Env, Env[keyof Env]]>) {
-            const previous = env[key]
-            ;(env as Record<keyof Env, unknown>)[key] = value
-            restore.push(() => {
-                ;(env as Record<keyof Env, unknown>)[key] = previous
-            })
-        }
-        try {
-            vi.resetModules()
-            const { default: worker } = await import('../src/index')
-            return await worker.fetch(request as Parameters<typeof worker.fetch>[0])
-        } finally {
-            for (const reset of restore) reset()
-        }
+    async function fetchWithFreshWorker(request: Request, env: Env): Promise<Response> {
+        vi.resetModules()
+        const { default: worker } = await import('../src/index')
+        return worker.fetch(request as Parameters<typeof worker.fetch>[0], env)
     }
 
     it('prepends the origin pathname and rewrites base-path origin links', async () => {
@@ -38,9 +41,10 @@ describe('proxy config', () => {
             })
         mockSurfaceDecisionsFetch()
 
-        const res = await fetchWithFreshWorker(new Request('https://test.example/foo/bar?baz=1'), {
-            ORIGIN_URL: 'https://origin.example/base/',
-        })
+        const res = await fetchWithFreshWorker(
+            new Request('https://test.example/foo/bar?baz=1'),
+            makeEnv({ ORIGIN_URL: 'https://origin.example/base/' }),
+        )
 
         expect(res.status).toBe(200)
         const text = await res.text()
@@ -54,7 +58,7 @@ describe('proxy config', () => {
             .intercept({ path: '/api/v1/envs/test_123/endpoints/foo/bar', method: 'GET' })
             .reply(200, { ok: true }, { headers: { 'Content-Type': 'application/json' } })
 
-        const res = await fetchWithFreshWorker(new Request('https://test.example/mos-endpoints/foo/bar'))
+        const res = await fetchWithFreshWorker(new Request('https://test.example/mos-endpoints/foo/bar'), makeEnv())
 
         expect(res.status).toBe(200)
         expect(await res.json()).toEqual({ ok: true })
@@ -78,7 +82,9 @@ describe('proxy config', () => {
             new Request('https://test.example/page.json', {
                 headers: { 'X-Override': 'from-client', 'X-Keep': 'client-value' },
             }),
-            { ORIGIN_REQUEST_HEADERS: { 'X-Api-Key': 'secret', 'X-Override': 'from-env' } },
+            makeEnv({
+                ORIGIN_REQUEST_HEADERS: { 'X-Api-Key': 'secret', 'X-Override': 'from-env' },
+            }),
         )
 
         expect(res.status).toBe(200)
