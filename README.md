@@ -9,6 +9,8 @@
 
 This worker includes handling for both HTTP response modification and CSS-targeted Components for content modifications including: removal/truncation, displaying offerings, and custom messaging.
 
+The shared proxy pipeline is provided by [`@monetizationos/proxy`](https://www.npmjs.com/package/@monetizationos/proxy). This repository contains the Cloudflare Worker entrypoint, environment binding mapping, and Cloudflare-specific adapters for `HTMLRewriter` and request metadata.
+
 Read more about using MonetizationOS at [docs.monetizationos.com](https://docs.monetizationos.com).
 
 ## Getting Started
@@ -21,13 +23,20 @@ Click deploy to Cloudflare to get started or fork this repo to customize it for 
 
 This worker requires the following environment variables to be set in your Cloudflare configuration:
 
--   `MONETIZATION_OS_SECRET_KEY`: Your MonetizationOS secret key. [Get your secret key](https://docs.monetizationos.com/docs/guides/environments/managing-environments#api-keys).
--   `ORIGIN_URL`: The origin URL for your proxied website.
--   `SURFACE_SLUG`: The slug for the MonetizationOS surface you want to target.
--   `AUTHENTICATED_USER_JWT_COOKIE_NAME`: Cookie name for authenticated user JWT sessions.
--   `ANONYMOUS_SESSION_COOKIE_NAME`: Cookie name for anonymous sessions.
+- `MONETIZATION_OS_SECRET_KEY`: Your MonetizationOS secret key. [Get your secret key](https://docs.monetizationos.com/docs/guides/environments/managing-environments#api-keys).
+- `ORIGIN_URL`: The origin URL for your proxied website.
+- `SURFACE_SLUG`: The slug for the MonetizationOS surface you want to target.
+- `AUTHENTICATED_USER_JWT_COOKIE_NAME`: Cookie name for authenticated user JWT sessions.
+- `ANONYMOUS_SESSION_COOKIE_NAME`: Cookie name for anonymous sessions.
+- `INJECT_SCRIPT_URL`: URL of the MonetizationOS web components script to inject when component transforms run.
+- `MONETIZATION_OS_HOST`: MonetizationOS API host. Defaults to `https://api.monetizationos.com` in the worker config.
+- `MONETIZATION_OS_ENDPOINTS_PREFIX`: Path prefix for proxied custom endpoints. Defaults to `/mos-endpoints/` in the worker config.
 
 Bindings should be set in your `wrangler.jsonc`, or a `.dev.vars.local` file when [working locally](https://developers.cloudflare.com/workers/development-testing/).
+
+## Optional: paths that skip surface decisions
+
+`SURFACE_DECISIONS_IGNORE_PATHS` is a comma-separated list of regular expressions. Matching pathnames still proxy to the origin and rewrite origin links, but skip MonetizationOS surface decisions and component transforms.
 
 ## Optional: headers sent to the origin
 
@@ -43,11 +52,11 @@ In the Cloudflare dashboard, the variable supports JSON input directly.
 
 ## Commands
 
--   `npm run dev` — Start local development using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
--   `npm run deploy` — Deploy the worker to Cloudflare.
--   `npm test` — Run tests with Vitest.
--   `npm run cf-typegen` — Generate Cloudflare type definitions.
--   `npm run lint` — Run lint checks with Biome.
+- `npm run dev` — Start local development using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
+- `npm run deploy` — Deploy the worker to Cloudflare.
+- `npm test` — Run tests with Vitest.
+- `npm run cf-typegen` — Generate Cloudflare type definitions.
+- `npm run lint` — Run lint checks with Biome.
 
 ## Local Development
 
