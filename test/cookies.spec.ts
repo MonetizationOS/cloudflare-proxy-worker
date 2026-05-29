@@ -19,7 +19,8 @@ describe('MonetizationOS Proxy', () => {
         {
             originSetCookie: ['jwt-cookie=origin-jwt; Path=/'],
             requestCookie: '',
-            expectedIdentity: { userJwt: 'origin-jwt' },
+            expectedIdentity: { userJwt: 'origin-jwt', createAnonymousIdentifierFallback: true },
+            expectedSetCookie: 'jwt-cookie=origin-jwt; Path=/, anon-session=response-id; Path=/',
         },
         {
             originSetCookie: [],
@@ -34,7 +35,8 @@ describe('MonetizationOS Proxy', () => {
         {
             originSetCookie: [],
             requestCookie: 'jwt-cookie=request-jwt; Path=/',
-            expectedIdentity: { userJwt: 'request-jwt' },
+            expectedIdentity: { userJwt: 'request-jwt', createAnonymousIdentifierFallback: true },
+            expectedSetCookie: 'anon-session=response-id; Path=/',
         },
         {
             originSetCookie: ['anon-session=origin-id; Path=/'],
@@ -44,9 +46,9 @@ describe('MonetizationOS Proxy', () => {
         {
             originSetCookie: [],
             requestCookie: 'anon-session=request-id; jwt-cookie=request-jwt;',
-            expectedIdentity: { userJwt: 'request-jwt' },
+            expectedIdentity: { userJwt: 'request-jwt', createAnonymousIdentifierFallback: true },
         },
-    ])('extracts identity from request - %s', async ({ originSetCookie, requestCookie, expectedIdentity }) => {
+    ])('extracts identity from request - %s', async ({ originSetCookie, requestCookie, expectedIdentity, expectedSetCookie }) => {
         mockOriginFetch({
             responseHeaders: {
                 'Set-Cookie': originSetCookie,
@@ -66,7 +68,8 @@ describe('MonetizationOS Proxy', () => {
         const response = await SELF.fetch(new Request('https://test.example/index.html', { headers: { Cookie: requestCookie } }))
         expect(response.status).toBe(200)
 
-        expect(response.headers.get('Set-Cookie')).toStrictEqual(originSetCookie.length ? originSetCookie.join(',') : null)
+        const defaultSetCookie = originSetCookie.length ? originSetCookie.join(',') : null
+        expect(response.headers.get('Set-Cookie')).toStrictEqual(expectedSetCookie ?? defaultSetCookie)
         expect(mockSurfaceDecision).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ identity: expectedIdentity }))
     })
 
