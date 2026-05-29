@@ -14,8 +14,8 @@ const proxy = new MOSProxyBuilder()
         surfaceDecisionsIgnorePaths: env.SURFACE_DECISIONS_IGNORE_PATHS,
         originRequestHeaders: env.ORIGIN_REQUEST_HEADERS ?? {},
     })
-    .withOriginFetcher(fetch)
-    .withApiFetcher(fetch)
+    .withOriginFetcher((request) => fetch(request))
+    .withApiFetcher((request) => fetch(request))
     .withHtmlRewriter({
         capabilities: {
             onEndTag: true,

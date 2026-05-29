@@ -1,4 +1,4 @@
-import { fetchMock, SELF } from 'cloudflare:test'
+import { SELF } from 'cloudflare:test'
 import { describe, expect, it } from 'vitest'
 import { mockOriginFetch, mockSurfaceDecisionsFetch, surfaceDecisionsResponse } from './helpers'
 
@@ -137,8 +137,6 @@ describe('MonetizationOS Proxy', () => {
             cssSelector: '&&&invalid###',
         },
     ])('rewrites HTML component content - $name', async ({ content, expected, cssSelector }) => {
-        fetchMock.activate()
-        fetchMock.disableNetConnect()
         mockOriginFetch()
         mockSurfaceDecisionsFetch({
             response: {
@@ -157,7 +155,5 @@ describe('MonetizationOS Proxy', () => {
 
         const text = await res.text()
         expect(text).toStrictEqual(expected)
-
-        fetchMock.assertNoPendingInterceptors()
     })
 })

@@ -1,12 +1,9 @@
-import { fetchMock, SELF } from 'cloudflare:test'
+import { SELF } from 'cloudflare:test'
 import { describe, expect, it } from 'vitest'
 import { mockOriginFetch, mockSurfaceDecisionsFetch, surfaceDecisionsResponse } from './helpers'
 
 describe('pageMetadata in surface decisions', () => {
     it('sends parsed meta tags in the surface decision request', async () => {
-        fetchMock.activate()
-        fetchMock.disableNetConnect()
-
         mockOriginFetch({
             responseBody: `<html><head>
                 <meta name="category" content="subscriber-only">
@@ -35,14 +32,9 @@ describe('pageMetadata in surface decisions', () => {
                 }),
             }),
         )
-
-        fetchMock.assertNoPendingInterceptors()
     })
 
     it('sends empty meta when origin has no meta tags', async () => {
-        fetchMock.activate()
-        fetchMock.disableNetConnect()
-
         mockOriginFetch({
             responseBody: `<html><head></head><body><p>Content</p></body></html>`,
         })
@@ -63,7 +55,5 @@ describe('pageMetadata in surface decisions', () => {
                 }),
             }),
         )
-
-        fetchMock.assertNoPendingInterceptors()
     })
 })

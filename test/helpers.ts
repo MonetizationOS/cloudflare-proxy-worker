@@ -1,6 +1,11 @@
-import { fetchMock } from 'cloudflare:test'
 import type { SurfaceDecisionResponse } from '@monetizationos/proxy'
 import { vi } from 'vitest'
+import { mockFetch } from './fetchMock'
+
+export { mockFetch } from './fetchMock'
+
+export const ORIGIN = 'https://origin.example'
+export const MOS_API = 'https://api.monetizationos.com'
 
 type MockOriginFetchOptions = {
     path?: string
@@ -30,10 +35,10 @@ export function mockOriginFetch({
         contentType = 'application/json'
     }
 
-    return fetchMock
-        .get('https://origin.example')
-        .intercept({ path, method, ...(requestBody ? { body: requestBody } : {}) })
-        .reply(status, responseBody, { headers: { ...responseHeaders, 'Content-Type': contentType } })
+    mockFetch(
+        { origin: ORIGIN, path, method, ...(requestBody ? { body: requestBody } : {}) },
+        { status, body: responseBody, headers: { ...responseHeaders, 'Content-Type': contentType } },
+    )
 }
 
 export const surfaceDecisionsResponse: SurfaceDecisionResponse = {
@@ -48,16 +53,12 @@ export const surfaceDecisionsResponse: SurfaceDecisionResponse = {
 
 export function mockSurfaceDecisionsFetch({ status = 200, response }: MockSurfaceDecisionsFetchOptions = {}) {
     const mockSurfaceDecision = vi.fn()
-    fetchMock
-        .get('https://api.monetizationos.com')
-        .intercept({ path: '/api/v1/surface-decisions', method: 'POST' })
-        .reply((data) => {
-            mockSurfaceDecision(JSON.parse(data.body as string))
-            return {
-                statusCode: status,
-                data: JSON.stringify({ ...surfaceDecisionsResponse, ...response }),
-                responseOptions: { headers: { 'Content-Type': 'application/json' } },
-            }
+    mockFetch({ origin: MOS_API, path: '/api/v1/surface-decisions', method: 'POST' }, async (request) => {
+        mockSurfaceDecision(JSON.parse(await request.text()))
+        return new Response(JSON.stringify({ ...surfaceDecisionsResponse, ...response }), {
+            status,
+            headers: { 'Content-Type': 'application/json' },
         })
+    })
     return mockSurfaceDecision
 }

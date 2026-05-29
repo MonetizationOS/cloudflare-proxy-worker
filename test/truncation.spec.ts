@@ -1,4 +1,4 @@
-import { fetchMock, SELF } from 'cloudflare:test'
+import { SELF } from 'cloudflare:test'
 import type { WebContentSurfaceBehavior } from '@monetizationos/proxy'
 import { describe, expect, it } from 'vitest'
 import { mockOriginFetch, mockSurfaceDecisionsFetch, surfaceDecisionsResponse } from './helpers'
@@ -341,8 +341,6 @@ describe('MonetizationOS Proxy', () => {
             expected: '<p>First text <h4>Subtitle</h4> <h4>Subtitle</h4> <h2>SubTitle</h2> Second text.</p>',
         },
     ])('truncates HTML component content - $name', async ({ content, original, expected, cssSelector }) => {
-        fetchMock.activate()
-        fetchMock.disableNetConnect()
         mockOriginFetch({
             responseBody: `<html><head></head><body>${original}</body></html>`,
         })
@@ -365,13 +363,9 @@ describe('MonetizationOS Proxy', () => {
         expect(text).toStrictEqual(
             `<html><head><script src="https://example.com/web-components-latest.js" async defer></script></head><body>${expected}</body></html>`,
         )
-
-        fetchMock.assertNoPendingInterceptors()
     })
 
     it('performs multiple truncations', async () => {
-        fetchMock.activate()
-        fetchMock.disableNetConnect()
         mockOriginFetch({
             responseBody: `
 <html>
@@ -451,7 +445,5 @@ describe('MonetizationOS Proxy', () => {
 APPEND</body>
 </html>`,
         )
-
-        fetchMock.assertNoPendingInterceptors()
     })
 })

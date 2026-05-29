@@ -1,15 +1,8 @@
-import { fetchMock, SELF } from 'cloudflare:test'
-import { afterEach, beforeAll, describe, expect, it } from 'vitest'
+import { SELF } from 'cloudflare:test'
+import { describe, expect, it } from 'vitest'
 import { mockOriginFetch, mockSurfaceDecisionsFetch } from './helpers'
 
 describe('MonetizationOS Proxy', () => {
-    beforeAll(() => {
-        fetchMock.activate()
-        fetchMock.disableNetConnect()
-    })
-
-    afterEach(() => fetchMock.assertNoPendingInterceptors())
-
     it.each([
         {
             originSetCookie: ['anon-session=origin-id; Path=/'],

@@ -1,15 +1,8 @@
-import { env, fetchMock, SELF } from 'cloudflare:test'
-import { afterEach, beforeAll, describe, expect, it } from 'vitest'
-import { mockOriginFetch, mockSurfaceDecisionsFetch, surfaceDecisionsResponse } from './helpers'
+import { env, SELF } from 'cloudflare:test'
+import { describe, expect, it } from 'vitest'
+import { MOS_API, mockFetch, mockOriginFetch, mockSurfaceDecisionsFetch, surfaceDecisionsResponse } from './helpers'
 
 describe('MonetizationOS Proxy', () => {
-    beforeAll(() => {
-        fetchMock.activate()
-        fetchMock.disableNetConnect()
-    })
-
-    afterEach(() => fetchMock.assertNoPendingInterceptors())
-
     it('proxies GET JSON requests', async () => {
         mockOriginFetch({
             path: '/hello/world?x=1&y=two',
@@ -44,13 +37,10 @@ describe('MonetizationOS Proxy', () => {
     })
 
     it('proxies mos API requests', async () => {
-        fetchMock
-            .get('https://api.monetizationos.com')
-            .intercept({
-                path: '/api/v1/envs/test_123/endpoints/custom-endpoint',
-                method: 'GET',
-            })
-            .reply(200, 'response')
+        mockFetch(
+            { origin: MOS_API, path: '/api/v1/envs/test_123/endpoints/custom-endpoint', method: 'GET' },
+            { status: 200, body: 'response' },
+        )
 
         const req = new Request('https://test.example/mos-endpoints/custom-endpoint', {
             method: 'GET',
