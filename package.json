@@ -53,6 +53,6 @@
         "wrangler": "^4.95.0"
     },
     "dependencies": {
-        "@monetizationos/proxy": "1.4.1"
+        "@monetizationos/proxy": "1.4.2"
     }
 }
