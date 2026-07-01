@@ -12,6 +12,7 @@ const proxy = new MOSProxyBuilder()
         authenticatedUserJwtCookieName: env.AUTHENTICATED_USER_JWT_COOKIE_NAME,
         injectScriptUrl: env.INJECT_SCRIPT_URL || undefined,
         surfaceDecisionsIgnorePaths: env.SURFACE_DECISIONS_IGNORE_PATHS,
+        surfaceDecisionsCookies: env.SURFACE_DECISIONS_COOKIES,
         originRequestHeaders: env.ORIGIN_REQUEST_HEADERS ?? {},
     })
     .withOriginFetcher(fetch)

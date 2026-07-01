@@ -1,7 +1,7 @@
 import { fetchMock } from 'cloudflare:test'
 import { env } from 'cloudflare:workers'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { mockSurfaceDecisionsFetch } from './helpers'
+import { mockOriginFetch, mockSurfaceDecisionsFetch } from './helpers'
 
 describe('proxy config', () => {
     beforeAll(() => {
@@ -75,6 +75,32 @@ describe('proxy config', () => {
 
         expect(res.status).toBe(200)
         expect(await res.json()).toEqual({ ok: true })
+    })
+
+    it('forwards matching cookies to surface decisions when SURFACE_DECISIONS_COOKIES is set', async () => {
+        mockOriginFetch({
+            responseHeaders: { 'Set-Cookie': 'theme=from-origin; Path=/' },
+        })
+        const mockSurfaceDecision = mockSurfaceDecisionsFetch()
+
+        const res = await fetchWithFreshWorker(
+            new Request('https://test.example/index.html', {
+                headers: { Cookie: 'jwt-cookie=request-jwt; theme=old; ignored=1' },
+            }),
+            { SURFACE_DECISIONS_COOKIES: '^jwt-cookie$, ^theme$' },
+        )
+
+        expect(res.status).toBe(200)
+        expect(mockSurfaceDecision).toHaveBeenCalledExactlyOnceWith(
+            expect.objectContaining({
+                http: expect.objectContaining({
+                    cookies: {
+                        'jwt-cookie': 'request-jwt',
+                        theme: 'from-origin',
+                    },
+                }),
+            }),
+        )
     })
 
     it('merges configured origin request headers and preserves untouched client headers', async () => {
