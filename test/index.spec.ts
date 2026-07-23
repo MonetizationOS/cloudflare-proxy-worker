@@ -1,5 +1,5 @@
 import { env, fetchMock, SELF } from 'cloudflare:test'
-import { afterEach, beforeAll, describe, expect, it } from 'vitest'
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { mockOriginFetch, mockSurfaceDecisionsFetch, surfaceDecisionsResponse } from './helpers'
 
 describe('MonetizationOS Proxy', () => {
@@ -98,6 +98,75 @@ describe('MonetizationOS Proxy', () => {
         expect(mockSurfaceDecision).toHaveBeenCalledWith(
             expect.objectContaining({
                 http: expect.objectContaining({ userAgent: 'TestBrowser/1.0' }),
+            }),
+        )
+    })
+
+    it('sends CF-Connecting-IP as http.clientIP in surface decisions payload', async () => {
+        mockOriginFetch()
+        const mockSurfaceDecision = mockSurfaceDecisionsFetch()
+
+        const req = new Request('https://test.example/index.html', {
+            headers: { 'CF-Connecting-IP': '203.0.113.10' },
+        })
+        await SELF.fetch(req)
+
+        expect(mockSurfaceDecision).toHaveBeenCalledWith(
+            expect.objectContaining({
+                http: expect.objectContaining({ clientIP: '203.0.113.10' }),
+            }),
+        )
+    })
+
+    it('sends Referer header in http.referer in surface decisions payload', async () => {
+        mockOriginFetch()
+        const mockSurfaceDecision = mockSurfaceDecisionsFetch()
+
+        const req = new Request('https://test.example/index.html', {
+            headers: { Referer: 'https://test.example/previous-page' },
+        })
+        await SELF.fetch(req)
+
+        expect(mockSurfaceDecision).toHaveBeenCalledWith(
+            expect.objectContaining({
+                http: expect.objectContaining({ referer: 'https://test.example/previous-page' }),
+            }),
+        )
+    })
+
+    it('sends Referer header in http.referer for offer redemption requests', async () => {
+        const mockOfferRedemption = vi.fn()
+        fetchMock
+            .get('https://api.monetizationos.com')
+            .intercept({ path: '/api/v1/offer-redemptions', method: 'POST' })
+            .reply((data) => {
+                mockOfferRedemption(JSON.parse(data.body as string))
+                return {
+                    statusCode: 200,
+                    data: JSON.stringify({ success: true }),
+                    responseOptions: { headers: { 'Content-Type': 'application/json' } },
+                }
+            })
+
+        const req = new Request('https://test.example/mos-api/offer-redemptions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Cookie: 'anon-session=the-session',
+                Referer: 'https://test.example/article/tombstone',
+            },
+            body: JSON.stringify({ offerToken: 'offer.abc' }),
+        })
+        const res = await SELF.fetch(req)
+
+        expect(res.status).toBe(200)
+        expect(mockOfferRedemption).toHaveBeenCalledWith(
+            expect.objectContaining({
+                offerToken: 'offer.abc',
+                http: expect.objectContaining({
+                    url: 'https://test.example/mos-api/offer-redemptions',
+                    referer: 'https://test.example/article/tombstone',
+                }),
             }),
         )
     })
