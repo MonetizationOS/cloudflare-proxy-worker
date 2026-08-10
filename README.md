@@ -21,7 +21,7 @@ Click deploy to Cloudflare to get started or fork this repo to customize it for 
 
 ## Required Variables
 
-This worker requires the following environment variables to be set in your Cloudflare configuration:
+**By default, the worker runs in single-domain mode.** Set these environment variables in your Cloudflare configuration:
 
 - `MONETIZATION_OS_SECRET_KEY`: Your MonetizationOS secret key. [Get your secret key](https://docs.monetizationos.com/docs/guides/environments/managing-environments#api-keys).
 - `ORIGIN_URL`: The origin URL for your proxied website.
@@ -33,6 +33,40 @@ This worker requires the following environment variables to be set in your Cloud
 - `MONETIZATION_OS_ENDPOINTS_PREFIX`: Path prefix for proxied custom endpoints. Defaults to `/mos-endpoints/` in the worker config.
 
 Bindings should be set in your `wrangler.jsonc`, or a `.dev.vars.local` file when [working locally](https://developers.cloudflare.com/workers/development-testing/).
+
+## Optional: multi-domain mode
+
+Use this when **one Worker** must proxy several public hostnames, each with its own origin, surface slug, and secret key. Set `DOMAIN_MAP` and omit (or ignore) `ORIGIN_URL`, `SURFACE_SLUG`, and `MONETIZATION_OS_SECRET_KEY` — those come from the map instead. Cookie names and other shared settings still come from Worker vars.
+
+In `wrangler.jsonc` `vars` (see also [`config/domain-map.example.json`](config/domain-map.example.json)):
+
+```jsonc
+"DOMAIN_MAP": {
+  "site-a.example.com": {
+    "originUrl": "https://origin-a.example",
+    "surfaceSlug": "web",
+    "mosSecretKeyEnvVar": "MONETIZATION_OS_SECRET_KEY_SITE_A"
+  },
+  "site-b.example.com": {
+    "originUrl": "https://origin-b.example",
+    "surfaceSlug": "other-web",
+    "mosSecretKeyEnvVar": "MONETIZATION_OS_SECRET_KEY_SITE_B"
+  }
+}
+```
+
+Each map key is the public hostname clients send in the `Host` header (port is ignored, casing is normalized). Each value provides that domain's origin, surface slug, and the **name of a Worker secret/var** that holds its MOS secret key. Secret values are never stored in `DOMAIN_MAP`.
+
+Field names can use either camelCase (`originUrl`, `surfaceSlug`, `mosSecretKeyEnvVar`) or env-var-style aliases (`ORIGIN_URL`, `SURFACE_SLUG`, `MONETIZATION_OS_SECRET_KEY_ENV`). Trailing slashes on `originUrl` are stripped. In the Cloudflare dashboard, `DOMAIN_MAP` may also be a JSON string.
+
+Set one secret (or var) per site. The variable **names** are committed in `DOMAIN_MAP`; the **values** are configured only as Worker secrets:
+
+```bash
+npx wrangler secret put MONETIZATION_OS_SECRET_KEY_SITE_A
+npx wrangler secret put MONETIZATION_OS_SECRET_KEY_SITE_B
+```
+
+Attach every public hostname to the same Worker (Custom Domains or routes). Unknown hosts return `404` with `No proxy configuration for this host`.
 
 ## Optional: paths that skip surface decisions
 

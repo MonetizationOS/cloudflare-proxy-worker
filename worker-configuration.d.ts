@@ -17,6 +17,11 @@ declare namespace Cloudflare {
 		SURFACE_DECISIONS_IGNORE_PATHS: string;
 		SURFACE_DECISIONS_COOKIES: string;
 		ORIGIN_REQUEST_HEADERS: Record<string, string>;
+		/**
+		 * Optional multi-domain map: hostname -> { originUrl, surfaceSlug, mosSecretKeyEnvVar }.
+		 * May be a JSON object (wrangler vars) or a JSON string (dashboard).
+		 */
+		DOMAIN_MAP?: Record<string, unknown> | string;
 	}
 }
 interface Env extends Cloudflare.Env {}

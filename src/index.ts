@@ -1,58 +1,10 @@
 import { env } from 'cloudflare:workers'
-import { type ElementHandlers, type HtmlRewriterSession, MOSProxyBuilder } from '@monetizationos/proxy'
+import { createProxy } from './proxyConfig'
 
-const proxy = new MOSProxyBuilder()
-    .withConfig({
-        originUrl: env.ORIGIN_URL || 'https://example.local',
-        surfaceSlug: env.SURFACE_SLUG ?? '',
-        mosHost: env.MONETIZATION_OS_HOST || 'https://api.monetizationos.com',
-        mosSecretKey: env.MONETIZATION_OS_SECRET_KEY ?? '',
-        mosEndpointsPrefix: env.MONETIZATION_OS_ENDPOINTS_PREFIX || '/mos-endpoints/',
-        anonymousSessionCookieName: env.ANONYMOUS_SESSION_COOKIE_NAME,
-        authenticatedUserJwtCookieName: env.AUTHENTICATED_USER_JWT_COOKIE_NAME,
-        injectScriptUrl: env.INJECT_SCRIPT_URL || undefined,
-        surfaceDecisionsIgnorePaths: env.SURFACE_DECISIONS_IGNORE_PATHS,
-        surfaceDecisionsCookies: env.SURFACE_DECISIONS_COOKIES,
-        originRequestHeaders: env.ORIGIN_REQUEST_HEADERS ?? {},
-    })
-    .withOriginFetcher(fetch)
-    .withApiFetcher(fetch)
-    .withHtmlRewriter({
-        capabilities: {
-            onEndTag: true,
-            nthChild: true,
-        },
-        create() {
-            return new CloudflareHtmlRewriterSession()
-        },
-    })
-    .withClientMetadata({
-        build(request) {
-            return {
-                cloudflare: {
-                    cf: request.cf,
-                },
-            }
-        },
-    })
-    .withClientIP((request) => request.headers.get('CF-Connecting-IP') ?? undefined)
-    .build()
+const proxy = createProxy(env)
 
 export default {
     async fetch(request): Promise<Response> {
         return proxy.handle(request)
     },
 } satisfies ExportedHandler<Env>
-
-class CloudflareHtmlRewriterSession implements HtmlRewriterSession {
-    private readonly rewriter = new HTMLRewriter()
-
-    on(selector: string, handlers: ElementHandlers): HtmlRewriterSession {
-        this.rewriter.on(selector, handlers as HTMLRewriterElementContentHandlers)
-        return this
-    }
-
-    transform(response: Response): Response {
-        return this.rewriter.transform(response)
-    }
-}

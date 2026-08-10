@@ -44,6 +44,9 @@
             },
             "ORIGIN_REQUEST_HEADERS": {
                 "description": "Optional JSON object mapping header names to values added to every origin request (e.g. {\"X-Api-Key\":\"secret\"}). Use {} when unset."
+            },
+            "DOMAIN_MAP": {
+                "description": "Optional multi-domain map (JSON object). Each key is a public hostname; each value has originUrl, surfaceSlug, and mosSecretKeyEnvVar naming a Worker secret for that domain. When set, ORIGIN_URL, SURFACE_SLUG, and MONETIZATION_OS_SECRET_KEY are ignored."
             }
         }
     },

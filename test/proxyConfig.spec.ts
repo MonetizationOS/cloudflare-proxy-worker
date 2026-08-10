@@ -127,4 +127,56 @@ describe('proxy config', () => {
         expect(res.status).toBe(200)
         expect(await res.json()).toEqual({ success: true })
     })
+
+    it('routes by Host from DOMAIN_MAP in multi-domain mode', async () => {
+        fetchMock
+            .get('https://origin-a.example')
+            .intercept({ path: '/page', method: 'GET' })
+            .reply(200, { site: 'a' }, { headers: { 'Content-Type': 'application/json' } })
+        fetchMock
+            .get('https://origin-b.example')
+            .intercept({ path: '/page', method: 'GET' })
+            .reply(200, { site: 'b' }, { headers: { 'Content-Type': 'application/json' } })
+
+        const multiDomainEnv = {
+            DOMAIN_MAP: {
+                'proxy-a.example': {
+                    originUrl: 'https://origin-a.example',
+                    surfaceSlug: 'surface-a',
+                    mosSecretKeyEnvVar: 'MOS_SECRET_A',
+                },
+                'proxy-b.example': {
+                    originUrl: 'https://origin-b.example',
+                    surfaceSlug: 'surface-b',
+                    mosSecretKeyEnvVar: 'MOS_SECRET_B',
+                },
+            },
+            MOS_SECRET_A: 'sk_test_a',
+            MOS_SECRET_B: 'sk_test_b',
+        } as Partial<Env>
+
+        const resA = await fetchWithFreshWorker(new Request('https://proxy-a.example/page'), multiDomainEnv)
+        expect(resA.status).toBe(200)
+        expect(await resA.json()).toEqual({ site: 'a' })
+
+        const resB = await fetchWithFreshWorker(new Request('https://proxy-b.example/page'), multiDomainEnv)
+        expect(resB.status).toBe(200)
+        expect(await resB.json()).toEqual({ site: 'b' })
+    })
+
+    it('returns 404 for unknown hosts in multi-domain mode', async () => {
+        const res = await fetchWithFreshWorker(new Request('https://unknown.example/page'), {
+            DOMAIN_MAP: {
+                'proxy.example': {
+                    originUrl: 'https://origin.example',
+                    surfaceSlug: 'web',
+                    mosSecretKeyEnvVar: 'MOS_SECRET_PROXY',
+                },
+            },
+            MOS_SECRET_PROXY: 'sk_test_example',
+        } as Partial<Env>)
+
+        expect(res.status).toBe(404)
+        expect(await res.text()).toBe('No proxy configuration for this host')
+    })
 })
