@@ -1,0 +1,12 @@
+{
+    "site-a.example.com": {
+        "originUrl": "https://origin-a.example",
+        "surfaceSlug": "web",
+        "mosSecretKeyEnvVar": "MONETIZATION_OS_SECRET_KEY_SITE_A"
+    },
+    "site-b.example.com": {
+        "originUrl": "https://origin-b.example",
+        "surfaceSlug": "other-web",
+        "mosSecretKeyEnvVar": "MONETIZATION_OS_SECRET_KEY_SITE_B"
+    }
+}
