@@ -54,6 +54,8 @@ Each pattern is a regex tested against the cookie **name**. Plain names like `^_
 
 `ORIGIN_REQUEST_HEADERS` adds or overrides outgoing headers on every upstream fetch to `ORIGIN_URL`. Set it to a JSON object mapping header names to values. Leave it as `{}` when no extra headers are needed.
 
+Origin requests also carry the viewer's host and protocol as `X-Forwarded-Host` and `X-Forwarded-Proto`, so the origin can build URLs on the public domain. Set either in `ORIGIN_REQUEST_HEADERS` to override it.
+
 In `wrangler.jsonc` `vars`:
 
 ```jsonc
